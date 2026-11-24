@@ -350,13 +350,13 @@
         Ui.Toast($"Trạng thái: {Fmt.StatusLabel(t.Status)}");
     }
 
-    private async Task Schedule((GanttRow Row, DateOnly Date) a)
+    private async Task Schedule((GanttRow Row, DateOnly Start, DateOnly End) a)
     {
         var t = (CustomTask)a.Row.Item!;
-        t.StartDate = a.Date;
-        if (t.DueDate is null || t.DueDate < t.StartDate) t.DueDate = a.Date.AddDays(6);
+        t.StartDate = a.Start;
+        t.DueDate = a.End;
         await Store.UpdateAsync(t);
-        Ui.Toast($"Đã đặt {Fmt.Date(t.StartDate)} → {Fmt.Date(t.DueDate)}");
+        Ui.Toast($"Đã đặt mốc {Fmt.Date(t.StartDate)} → {Fmt.Date(t.DueDate)}");
     }
 
     private void OpenTask(CustomTask? t)

@@ -23,7 +23,7 @@
 </GanttChart>
 
 <p class="hint-text">
-    💡 Bấm vào tên hoặc thanh màu để sửa; bấm vào vùng trống của dòng chưa có ngày để đặt ngày bắt đầu (mặc định 7 ngày).
+    💡 Bấm vào tên hoặc thanh màu để sửa chi tiết; bấm <strong>+ Chọn mốc thời gian</strong> trên các dòng chưa có ngày để chọn ngày bắt đầu và hạn hoàn thành.
     Thanh đỏ = quá hạn, xanh lá = đã xong, cam = đang làm.
 </p>
 
@@ -175,14 +175,13 @@
         await OnChanged.InvokeAsync();
     }
 
-    private async Task Schedule((GanttRow Row, DateOnly Date) a)
+    private async Task Schedule((GanttRow Row, DateOnly Start, DateOnly End) a)
     {
         var t = (TimelineTask)a.Row.Item!;
-        t.StartDate = a.Date;
-        t.DueDate ??= a.Date.AddDays(6);
-        if (t.DueDate < t.StartDate) t.DueDate = t.StartDate.Value.AddDays(6);
+        t.StartDate = a.Start;
+        t.DueDate = a.End;
         await Store.UpdateAsync(t);
-        Ui.Toast($"Đã đặt {Fmt.Date(t.StartDate)} → {Fmt.Date(t.DueDate)}");
+        Ui.Toast($"Đã đặt mốc {Fmt.Date(t.StartDate)} → {Fmt.Date(t.DueDate)}");
         await OnChanged.InvokeAsync();
     }
 

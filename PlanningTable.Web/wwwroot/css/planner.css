@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    Bổ sung cho bản C# / Blazor: layout 2 cột, Gantt timeline,
    bảng dạng spreadsheet (giấy tờ, tìm trường), tag màu.
    ========================================================= */
@@ -419,21 +419,26 @@
 .gantt-bar-label.summary { font-weight: 700; color: var(--text-secondary); font-size: 0.76rem; }
 .gantt-row.status-done .gantt-bar-label:not(.summary) { color: var(--text-muted); }
 
-.gantt-hint {
+.gantt-add-date {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.74rem;
-  color: var(--text-muted);
-  border: 1px dashed var(--border);
-  border-radius: 6px;
-  padding: 3px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+  border: 1px dashed var(--primary-border);
+  border-radius: 7px;
+  padding: 4px 10px;
   white-space: nowrap;
-  pointer-events: none;
-  background: var(--surface);
+  background: var(--primary-soft);
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
 }
-.gantt-track:hover .gantt-hint { border-color: var(--accent); color: var(--accent); }
-.gantt-row:not(.group) .gantt-track { cursor: crosshair; }
+.gantt-add-date:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
 
 .gantt-empty {
   position: sticky;

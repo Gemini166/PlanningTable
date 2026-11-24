@@ -98,8 +98,7 @@
                                 }
                             }
                         </div>
-                        <div class="gantt-track" style="width:@(TrackWidth)px"
-                             @onclick="e => OnTrackClick(r, e)">
+                        <div class="gantt-track" style="width:@(TrackWidth)px">
                             @if (r.HasDates)
                             {
                                 var left = X(r.From!.Value);
@@ -108,7 +107,7 @@
                                 <div class="gantt-bar @(r.IsGroup ? "summary" : "") bar-@r.Status @(overdue ? "overdue" : "")"
                                      style="left:@Px(left);width:@Px(width)"
                                      title="@r.Label · @Fmt.Date(r.From) → @Fmt.Date(r.To) (@r.Days ngày)"
-                                     @onclick="() => OnBarClick(r)" @onclick:stopPropagation="true">
+                                     @onclick="() => OnBarClick(r)">
                                     @if (!r.IsGroup && width >= 54)
                                     {
                                         <span class="gantt-bar-days">@r.Days ngày</span>
@@ -124,7 +123,10 @@
                             }
                             else if (!r.IsGroup && OnSchedule.HasDelegate)
                             {
-                                <div class="gantt-hint" style="left:@Px(TodayX ?? 12)">Chưa đặt ngày — bấm vào timeline để đặt</div>
+                                <button type="button" class="gantt-add-date" style="left:@Px(TodayX ?? 12)"
+                                        @onclick="() => OpenDatePicker(r)">
+                                    + Chọn mốc thời gian
+                                </button>
                             }
                         </div>
                     </div>
@@ -134,6 +136,49 @@
     </div>
 </div>
 
+<Modal Visible="_pickRow is not null" Title="Chọn mốc thời gian" OnClose="CloseDatePicker">
+    @if (_pickRow is { } pr)
+    {
+        <form @onsubmit="SaveDatePicker">
+            <div class="form-group">
+                <div class="form-label">Đầu việc</div>
+                <div style="font-weight:600;color:var(--text);font-size:0.9rem">@pr.Label</div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Ngày bắt đầu</label>
+                    <input type="date" class="form-input" required @bind="_pickStart" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hạn hoàn thành</label>
+                    <input type="date" class="form-input" required @bind="_pickEnd" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Chọn nhanh khoảng thời gian</label>
+                <div class="chip-scroll">
+                    <button type="button" class="chip" @onclick="() => ApplyDuration(7)">+ 7 ngày</button>
+                    <button type="button" class="chip" @onclick="() => ApplyDuration(14)">+ 14 ngày</button>
+                    <button type="button" class="chip" @onclick="() => ApplyMonths(1)">+ 1 tháng</button>
+                    <button type="button" class="chip" @onclick="() => ApplyMonths(2)">+ 2 tháng</button>
+                </div>
+            </div>
+            @if (_pickStart is { } ps && _pickEnd is { } pe && pe >= ps)
+            {
+                <div class="form-hint">⏱ Thời lượng: <strong>@(pe.DayNumber - ps.DayNumber + 1) ngày</strong> (@Fmt.Date(ps) → @Fmt.Date(pe))</div>
+            }
+            @if (_pickError is not null)
+            {
+                <div class="form-error">@_pickError</div>
+            }
+            <div class="form-actions">
+                <button type="button" class="btn btn-soft" @onclick="CloseDatePicker">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu mốc thời gian</button>
+            </div>
+        </form>
+    }
+</Modal>
+
 @code {
     [Parameter, EditorRequired] public IReadOnlyList<GanttRow> Rows { get; set; } = [];
     [Parameter] public RenderFragment? Toolbar { get; set; }
@@ -142,8 +187,8 @@
     [Parameter] public EventCallback<GanttRow> OnRowClick { get; set; }
     [Parameter] public EventCallback<GanttRow> OnStatusClick { get; set; }
     [Parameter] public EventCallback<GanttRow> OnGroupToggle { get; set; }
-    /// <summary>Bấm vào vùng trống của một dòng chưa có ngày → đặt ngày bắt đầu tại vị trí bấm.</summary>
-    [Parameter] public EventCallback<(GanttRow Row, DateOnly Date)> OnSchedule { get; set; }
+    /// <summary>Đặt mốc thời gian (ngày bắt đầu & hạn hoàn thành) cho đầu việc.</summary>
+    [Parameter] public EventCallback<(GanttRow Row, DateOnly Start, DateOnly End)> OnSchedule { get; set; }
 
     private record Scale(string Key, string Label, double PxPerDay);
     private static readonly Scale[] Scales =
@@ -160,6 +205,11 @@
     private bool _leftCollapsed;
     private ElementReference _scrollEl;
     private const double BarMinWidth = 8;
+
+    private GanttRow? _pickRow;
+    private DateOnly? _pickStart;
+    private DateOnly? _pickEnd;
+    private string? _pickError;
 
     private double PxPerDay => Scales.First(s => s.Key == _scale).PxPerDay;
     private int LeftWidth => _leftCollapsed ? 64 : 330;
@@ -244,11 +294,50 @@
     private Task OnLeftClick(GanttRow r) => r.IsGroup ? OnGroupToggle.InvokeAsync(r) : OnRowClick.InvokeAsync(r);
     private Task OnBarClick(GanttRow r) => r.IsGroup ? OnGroupToggle.InvokeAsync(r) : OnRowClick.InvokeAsync(r);
 
-    private async Task OnTrackClick(GanttRow r, MouseEventArgs e)
+    private void OpenDatePicker(GanttRow r)
     {
-        if (r.IsGroup || r.HasDates || !OnSchedule.HasDelegate) return;
-        var date = RangeStart.AddDays((int)Math.Floor(e.OffsetX / PxPerDay));
-        await OnSchedule.InvokeAsync((r, date));
+        _pickRow = r;
+        _pickStart = r.Start ?? Fmt.Today;
+        _pickEnd = r.End ?? _pickStart.Value.AddDays(13);
+        _pickError = null;
+    }
+
+    private void CloseDatePicker()
+    {
+        _pickRow = null;
+        _pickError = null;
+    }
+
+    private void ApplyDuration(int days)
+    {
+        _pickStart ??= Fmt.Today;
+        _pickEnd = _pickStart.Value.AddDays(days - 1);
+        _pickError = null;
+    }
+
+    private void ApplyMonths(int months)
+    {
+        _pickStart ??= Fmt.Today;
+        _pickEnd = _pickStart.Value.AddMonths(months);
+        _pickError = null;
+    }
+
+    private async Task SaveDatePicker()
+    {
+        if (_pickRow is null) return;
+        if (_pickStart is not { } s || _pickEnd is not { } e)
+        {
+            _pickError = "Vui lòng chọn cả ngày bắt đầu và hạn hoàn thành.";
+            return;
+        }
+        if (e < s)
+        {
+            _pickError = "Hạn hoàn thành phải sau hoặc bằng ngày bắt đầu.";
+            return;
+        }
+        var row = _pickRow;
+        CloseDatePicker();
+        await OnSchedule.InvokeAsync((row, s, e));
     }
 
     private async Task ScrollToToday()
@@ -256,7 +345,6 @@
         if (TodayX is not { } x) return;
         try
         {
-            // Gọi element.scrollTo(...) có sẵn của trình duyệt.
             await JS.InvokeVoidAsync("Element.prototype.scrollTo.call", _scrollEl,
                 new { left = Math.Max(0, x - 160), behavior = "smooth" });
         }

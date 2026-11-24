@@ -1,756 +1,230 @@
 {
- "version": 1,
- "settings": {
-  "theme": "light",
-  "eurRate": 27500,
-  "targetIntakeDate": "",
-  "targetIntakeName": "Winter / Summer Intake"
- },
- "studyAbroad": {
+  "format": "planning-table-v2",
+  "settings": {
+    "theme": "light",
+    "eurRate": 27500,
+    "targetIntakeDate": "2027-10-01",
+    "targetIntakeName": "Winter Semester 2027/28"
+  },
   "timeline": [
-   {
-    "id": "tl-1",
-    "phase": "T-12 đến T-10 tháng",
-    "task": "Xác định intake (Winter/Summer), shortlist 10–15 chương trình",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-2",
-    "phase": "T-12 đến T-10 tháng",
-    "task": "Audit profile: GPA, ngành nền, gaps môn Toán/Stats/CS",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-3",
-    "phase": "T-12 đến T-10 tháng",
-    "task": "Lập folder hệ thống: Docs/APS/Uni-assist/Visa + naming convention",
-    "priority": "P2",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-4",
-    "phase": "T-11 đến T-9 tháng",
-    "task": "Plan & học/ôn IELTS/TOEFL (target score theo trường top)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-5",
-    "phase": "T-11 đến T-9 tháng",
-    "task": "Đăng ký lịch thi IELTS/TOEFL lần 1",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-6",
-    "phase": "T-11 đến T-9 tháng",
-    "task": "Xin bảng điểm/bằng/giấy xác nhận từ trường ĐH",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-7",
-    "phase": "T-11 đến T-9 tháng",
-    "task": "Thu thập Syllabus/Module handbook các môn quan trọng",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-8",
-    "phase": "T-10 đến T-8 tháng",
-    "task": "Chuẩn bị hồ sơ APS (theo checklist APS)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-9",
-    "phase": "T-10 đến T-8 tháng",
-    "task": "Dịch thuật + công chứng batch 1 (bằng + bảng điểm + giấy tờ cốt lõi)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-10",
-    "phase": "T-10 đến T-8 tháng",
-    "task": "Viết CV bản 1 + chuẩn hoá Europass/format EU",
-    "priority": "P2",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-11",
-    "phase": "T-10 đến T-8 tháng",
-    "task": "Xây bộ project evidence (GitHub/Kaggle/portfolio)",
-    "priority": "P2",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-12",
-    "phase": "T-9 đến T-7 tháng",
-    "task": "Viết SOP/Motivation Letter khung (core story)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-13",
-    "phase": "T-9 đến T-7 tháng",
-    "task": "Customize SOP theo từng trường (ít nhất top 5)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-14",
-    "phase": "T-9 đến T-7 tháng",
-    "task": "Chốt người viết LOR + gửi “LOR kit” (CV + SOP + bullet điểm mạnh)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-15",
-    "phase": "T-8 đến T-6 tháng",
-    "task": "Thi IELTS/TOEFL lần 1 + lên kế hoạch thi lại (nếu cần)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-16",
-    "phase": "T-8 đến T-6 tháng",
-    "task": "Tạo tài khoản Uni-assist (nếu có trường dùng) + chuẩn bị VPD (nếu yêu cầu)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-17",
-    "phase": "T-7 đến T-5 tháng",
-    "task": "Hoàn thiện bộ hồ sơ nộp (PDF theo chuẩn từng cổng)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-18",
-    "phase": "T-7 đến T-5 tháng",
-    "task": "Nộp hồ sơ các trường deadline sớm (rolling/early)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-19",
-    "phase": "T-6 đến T-3 tháng",
-    "task": "Theo dõi trạng thái hồ sơ (uni portal / Uni-assist) + bổ sung thiếu",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-20",
-    "phase": "T-6 đến T-3 tháng",
-    "task": "Nhận kết quả (Zulassung/Zu) + chọn trường",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-21",
-    "phase": "T-4 đến T-2 tháng",
-    "task": "Mở Blocked Account (đúng mức quy định năm đó)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-22",
-    "phase": "T-4 đến T-2 tháng",
-    "task": "Mua bảo hiểm giai đoạn xin visa (travel insurance)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-23",
-    "phase": "T-4 đến T-2 tháng",
-    "task": "Đặt lịch hẹn visa + chuẩn bị checklist visa",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-24",
-    "phase": "T-3 đến T-1 tháng",
-    "task": "Nộp visa + phỏng vấn (nếu có)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-25",
-    "phase": "T-2 đến T-1 tháng",
-    "task": "Tìm nhà (WG/Student dorm), chuẩn bị Anmeldung docs",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-26",
-    "phase": "T-2 đến T-1 tháng",
-    "task": "Đóng Semesterbeitrag (nếu cần trước khi nhập học)",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-27",
-    "phase": "T-1 đến T-0.5 tháng",
-    "task": "Đặt vé bay + chuẩn bị hành lý + sim/bank plan",
-    "priority": "P2",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "tl-28",
-    "phase": "T-0.5 đến nhập học",
-    "task": "Sang Đức: đăng ký cư trú (Anmeldung), mở bank, kích hoạt bảo hiểm",
-    "priority": "P1",
-    "startDate": "",
-    "dueDate": "",
-    "status": "todo",
-    "note": ""
-   }
+    { "sortOrder": 1, "phase": "T-12 đến T-10 tháng", "task": "Xác định intake (Winter/Summer), shortlist 10–15 chương trình", "priority": "P1", "startDate": "2026-11-25", "dueDate": "2026-12-10", "status": "todo", "note": "Ưu tiên chương trình Master Data Science / CS dạy bằng tiếng Anh tại Đức." },
+    { "sortOrder": 2, "phase": "T-12 đến T-10 tháng", "task": "Audit profile: GPA, ngành nền, gaps môn Toán/Stats/CS", "priority": "P1", "startDate": "2026-12-01", "dueDate": "2026-12-15", "status": "todo", "note": "Quy đổi GPA sang thang điểm Đức (Bavarian Formula) và đối chiếu tín chỉ ECTS." },
+    { "sortOrder": 3, "phase": "T-12 đến T-10 tháng", "task": "Lập folder hệ thống: Docs/APS/Uni-assist/Visa + naming convention", "priority": "P2", "startDate": "2026-12-10", "dueDate": "2026-12-20", "status": "todo", "note": "Đặt tên file chuẩn: YYYYMMDD_TenGiayTo_HoTen.pdf trên Google Drive/OneDrive." },
+
+    { "sortOrder": 4, "phase": "T-11 đến T-9 tháng", "task": "Plan & học/ôn IELTS/TOEFL (target score theo trường top)", "priority": "P1", "startDate": "2026-12-01", "dueDate": "2027-01-31", "status": "todo", "note": "Mục tiêu tối thiểu IELTS 6.5–7.0 (không kỹ năng nào dưới 6.0)." },
+    { "sortOrder": 5, "phase": "T-11 đến T-9 tháng", "task": "Đăng ký lịch thi IELTS/TOEFL lần 1", "priority": "P1", "startDate": "2026-12-20", "dueDate": "2027-01-05", "status": "todo", "note": "Đặt lịch trước 4–6 tuần để giữ suất thi máy (có kết quả sau 3–5 ngày)." },
+    { "sortOrder": 6, "phase": "T-11 đến T-9 tháng", "task": "Xin bảng điểm/bằng/giấy xác nhận từ trường ĐH", "priority": "P1", "startDate": "2026-12-15", "dueDate": "2027-01-15", "status": "todo", "note": "Xin kèm bản tiếng Anh có dấu trường và bảng quy đổi thang điểm (Grading Scale)." },
+    { "sortOrder": 7, "phase": "T-11 đến T-9 tháng", "task": "Thu thập Syllabus/Module handbook các môn quan trọng", "priority": "P1", "startDate": "2026-12-20", "dueDate": "2027-01-25", "status": "todo", "note": "Tập trung mô tả các môn Toán cao cấp, Xác suất thống kê, Cấu trúc dữ liệu, ML/AI." },
+
+    { "sortOrder": 8, "phase": "T-10 đến T-8 tháng", "task": "Chuẩn bị hồ sơ APS (theo checklist APS)", "priority": "P1", "startDate": "2027-01-10", "dueDate": "2027-02-15", "status": "todo", "note": "Đăng ký online trên aps-vietnam.de, chuyển khoản phí và gửi hồ sơ sớm." },
+    { "sortOrder": 9, "phase": "T-10 đến T-8 tháng", "task": "Dịch thuật + công chứng batch 1 (bằng + bảng điểm + giấy tờ cốt lõi)", "priority": "P1", "startDate": "2027-01-15", "dueDate": "2027-02-05", "status": "todo", "note": "Làm 3–4 bộ công chứng bản sao để dùng cho APS, Uni-assist, Trường và Visa." },
+    { "sortOrder": 10, "phase": "T-10 đến T-8 tháng", "task": "Viết CV bản 1 + chuẩn hoá Europass/format EU", "priority": "P2", "startDate": "2027-01-20", "dueDate": "2027-02-10", "status": "todo", "note": "Tối đa 2 trang, làm rõ GPA, kỹ năng Python/SQL/ML, kinh nghiệm nghiên cứu/dự án." },
+    { "sortOrder": 11, "phase": "T-10 đến T-8 tháng", "task": "Xây bộ project evidence (GitHub/Kaggle/portfolio)", "priority": "P2", "startDate": "2027-01-25", "dueDate": "2027-02-28", "status": "todo", "note": "Dọn đẹp 2–3 repo GitHub có README rõ ràng, biểu đồ kết quả và demo." },
+
+    { "sortOrder": 12, "phase": "T-9 đến T-7 tháng", "task": "Viết SOP/Motivation Letter khung (core story)", "priority": "P1", "startDate": "2027-02-01", "dueDate": "2027-02-20", "status": "todo", "note": "Nêu rõ động lực học Data Science, nền tảng học thuật và định hướng nghề nghiệp." },
+    { "sortOrder": 13, "phase": "T-9 đến T-7 tháng", "task": "Customize SOP theo từng trường (ít nhất top 5)", "priority": "P1", "startDate": "2027-02-21", "dueDate": "2027-03-15", "status": "todo", "note": "Nhắc tên môn học, phòng lab hoặc giáo sư cụ thể của từng trường." },
+    { "sortOrder": 14, "phase": "T-9 đến T-7 tháng", "task": "Chốt người viết LOR + gửi “LOR kit” (CV + SOP + bullet điểm mạnh)", "priority": "P1", "startDate": "2027-02-05", "dueDate": "2027-03-10", "status": "todo", "note": "Nhờ 2 giảng viên/quản lý trước ít nhất 4 tuần; kiểm tra yêu cầu ký tay/email trường." },
+
+    { "sortOrder": 15, "phase": "T-8 đến T-6 tháng", "task": "Thi IELTS/TOEFL lần 1 + lên kế hoạch thi lại (nếu cần)", "priority": "P1", "startDate": "2027-02-15", "dueDate": "2027-03-20", "status": "todo", "note": "Nếu chưa đạt band mục tiêu, đăng ký One Skill Retake hoặc thi lại trong tháng 3." },
+    { "sortOrder": 16, "phase": "T-8 đến T-6 tháng", "task": "Tạo tài khoản Uni-assist (nếu có trường dùng) + chuẩn bị VPD (nếu yêu cầu)", "priority": "P1", "startDate": "2027-03-01", "dueDate": "2027-04-05", "status": "todo", "note": "VPD thường mất 4–6 tuần xử lý, cần nộp trước hạn chót trường ít nhất 6 tuần." },
+
+    { "sortOrder": 17, "phase": "T-7 đến T-5 tháng", "task": "Hoàn thiện bộ hồ sơ nộp (PDF theo chuẩn từng cổng)", "priority": "P1", "startDate": "2027-03-20", "dueDate": "2027-04-15", "status": "todo", "note": "Kiểm tra dung lượng file PDF, thứ tự trang, chứng chỉ APS và Module Handbook." },
+    { "sortOrder": 18, "phase": "T-7 đến T-5 tháng", "task": "Nộp hồ sơ các trường deadline sớm (rolling/early)", "priority": "P1", "startDate": "2027-04-01", "dueDate": "2027-05-31", "status": "todo", "note": "Lưu ý: RWTH Aachen (01/03), TUM (31/05), Mannheim (31/05), LMU (15/07), TU Berlin (15/07)." },
+
+    { "sortOrder": 19, "phase": "T-6 đến T-3 tháng", "task": "Theo dõi trạng thái hồ sơ (uni portal / Uni-assist) + bổ sung thiếu", "priority": "P1", "startDate": "2027-04-15", "dueDate": "2027-06-30", "status": "todo", "note": "Kiểm tra email và portal hàng tuần để phản hồi kịp nếu trường yêu cầu bổ sung." },
+    { "sortOrder": 20, "phase": "T-6 đến T-3 tháng", "task": "Nhận kết quả (Zulassung/Zu) + chọn trường", "priority": "P1", "startDate": "2027-06-01", "dueDate": "2027-07-15", "status": "todo", "note": "So sánh chương trình, chi phí thành phố và xác nhận nhập học (Enrollment)." },
+
+    { "sortOrder": 21, "phase": "T-4 đến T-2 tháng", "task": "Mở Blocked Account (đúng mức quy định năm đó)", "priority": "P1", "startDate": "2027-06-15", "dueDate": "2027-07-10", "status": "todo", "note": "Expatrio / Coracle / Fintiba; mức tham khảo 11.904 EUR/năm (992 EUR/tháng)." },
+    { "sortOrder": 22, "phase": "T-4 đến T-2 tháng", "task": "Mua bảo hiểm giai đoạn xin visa (travel insurance)", "priority": "P1", "startDate": "2027-06-20", "dueDate": "2027-07-10", "status": "todo", "note": "Có thể chọn gói Value Package kèm bảo hiểm công TK/AOK và travel insurance." },
+    { "sortOrder": 23, "phase": "T-4 đến T-2 tháng", "task": "Đặt lịch hẹn visa + chuẩn bị checklist visa", "priority": "P1", "startDate": "2027-06-15", "dueDate": "2027-07-15", "status": "todo", "note": "Đặt lịch qua VFS Global / ĐSQ Đức sớm vì mùa cao điểm tháng 7–8 rất đông." },
+
+    { "sortOrder": 24, "phase": "T-3 đến T-1 tháng", "task": "Nộp visa + phỏng vấn (nếu có)", "priority": "P1", "startDate": "2027-07-15", "dueDate": "2027-08-20", "status": "todo", "note": "Thời gian xét duyệt visa du học Đức thường 4–8 tuần." },
+
+    { "sortOrder": 25, "phase": "T-2 đến T-1 tháng", "task": "Tìm nhà (WG/Student dorm), chuẩn bị Anmeldung docs", "priority": "P1", "startDate": "2027-07-20", "dueDate": "2027-09-10", "status": "todo", "note": "Đăng ký KTX Studierendenwerk ngay khi có Zu; tìm thêm trên WG-Gesucht." },
+    { "sortOrder": 26, "phase": "T-2 đến T-1 tháng", "task": "Đóng Semesterbeitrag (nếu cần trước khi nhập học)", "priority": "P1", "startDate": "2027-08-01", "dueDate": "2027-09-05", "status": "todo", "note": "Chuyển khoản đúng mã sinh viên (Verwendungszweck) để hoàn tất Immatrikulation." },
+
+    { "sortOrder": 27, "phase": "T-1 đến T-0.5 tháng", "task": "Đặt vé bay + chuẩn bị hành lý + sim/bank plan", "priority": "P2", "startDate": "2027-08-25", "dueDate": "2027-09-15", "status": "todo", "note": "Mang theo tiền mặt dự phòng ~500–800 EUR, hồ sơ bản gốc và thuốc cá nhân." },
+
+    { "sortOrder": 28, "phase": "T-0.5 đến nhập học", "task": "Sang Đức: đăng ký cư trú (Anmeldung), mở bank, kích hoạt bảo hiểm", "priority": "P1", "startDate": "2027-09-20", "dueDate": "2027-10-01", "status": "todo", "note": "Làm Anmeldung trong vòng 14 ngày để nhận Tax ID và kích hoạt tài khoản phong tỏa." }
   ],
   "documents": [
-   {
-    "id": "doc-1",
-    "name": "APS (Thẩm tra thạc sĩ) – Hồ sơ & kết quả",
-    "translation": "Dịch/CC theo yêu cầu APS",
-    "usedFor": "APS, Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Thời gian xử lý có thể dài; nên khởi động sớm."
-   },
-   {
-    "id": "doc-2",
-    "name": "Hộ chiếu",
-    "translation": "Photo công chứng (x2–x4)",
-    "usedFor": "Visa, Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Kiểm tra hạn hộ chiếu (khuyến nghị còn hạn > 12–18 tháng)."
-   },
-   {
-    "id": "doc-3",
-    "name": "Ảnh thẻ sinh trắc học",
-    "translation": "Không",
-    "usedFor": "Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Chuẩn kích thước theo yêu cầu LSQ/ĐSQ."
-   },
-   {
-    "id": "doc-4",
-    "name": "Bằng tốt nghiệp ĐH",
-    "translation": "Dịch + công chứng (x2–x4)",
-    "usedFor": "APS, Uni-assist/Trường, Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Nếu chưa có bằng: giấy chứng nhận tốt nghiệp tạm thời (nếu được chấp nhận)."
-   },
-   {
-    "id": "doc-5",
-    "name": "Bảng điểm ĐH (Transcript)",
-    "translation": "Dịch + công chứng (x2–x4)",
-    "usedFor": "APS, Uni-assist/Trường, Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Xin bản tiếng Anh từ trường (nếu có) để giảm dịch thuật."
-   },
-   {
-    "id": "doc-6",
-    "name": "Thang điểm/Grading scale",
-    "translation": "Dịch + công chứng (x1–x2)",
-    "usedFor": "Uni-assist/Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Nhiều trường yêu cầu để quy đổi/đánh giá GPA."
-   },
-   {
-    "id": "doc-7",
-    "name": "Giấy xác nhận tốt nghiệp/hoàn thành chương trình",
-    "translation": "Dịch + công chứng (x1–x2)",
-    "usedFor": "APS, Uni-assist/Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Hữu ích nếu đang chờ cấp bằng."
-   },
-   {
-    "id": "doc-8",
-    "name": "Syllabus/Module Handbook từng môn (ĐH)",
-    "translation": "Thường dịch chọn lọc (x1)",
-    "usedFor": "APS, Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Ưu tiên các môn nền DS/CS/Math/Stats/ML/DB."
-   },
-   {
-    "id": "doc-9",
-    "name": "Mô tả chương trình/chuẩn đầu ra ngành (nếu có)",
-    "translation": "Dịch (x1)",
-    "usedFor": "Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Dùng khi cần chứng minh background phù hợp."
-   },
-   {
-    "id": "doc-10",
-    "name": "CV (Europass / chuẩn EU)",
-    "translation": "Không (viết tiếng Anh)",
-    "usedFor": "Trường, Visa (tùy)",
-    "status": "todo",
-    "dueDate": "",
-    "note": "1–2 trang, nhấn mạnh project/skills DS."
-   },
-   {
-    "id": "doc-11",
-    "name": "Motivation Letter / SOP",
-    "translation": "Không (tiếng Anh)",
-    "usedFor": "Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Viết theo từng chương trình; tránh dùng 1 bản cho tất cả."
-   },
-   {
-    "id": "doc-12",
-    "name": "Thư giới thiệu (LOR) 1",
-    "translation": "Không (tiếng Anh)",
-    "usedFor": "Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Xác định người viết + deadline nội bộ."
-   },
-   {
-    "id": "doc-13",
-    "name": "Thư giới thiệu (LOR) 2",
-    "translation": "Không (tiếng Anh)",
-    "usedFor": "Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Có thể cần bản ký tay + đóng dấu (tùy trường)."
-   },
-   {
-    "id": "doc-14",
-    "name": "Chứng chỉ tiếng Anh (IELTS/TOEFL)",
-    "translation": "Không",
-    "usedFor": "Trường, Visa (tùy)",
-    "status": "todo",
-    "dueDate": "",
-    "note": "DS taught in English thường yêu cầu IELTS/TOEFL; kiểm tra điểm tối thiểu từng trường."
-   },
-   {
-    "id": "doc-15",
-    "name": "(Nếu có) TestDaF/Goethe (tiếng Đức)",
-    "translation": "Không",
-    "usedFor": "Trường/Visa (tùy)",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Không bắt buộc nếu chương trình 100% English, nhưng biết Đức ngữ là lợi thế sống/việc."
-   },
-   {
-    "id": "doc-16",
-    "name": "Portfolio dự án (GitHub/Kaggle/Website)",
-    "translation": "Không",
-    "usedFor": "Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Link + mô tả ngắn; ưu tiên dự án ML/DS thực tế."
-   },
-   {
-    "id": "doc-17",
-    "name": "Bài báo/giải thưởng/chứng nhận khóa học",
-    "translation": "Dịch (tùy)",
-    "usedFor": "Trường",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Chọn cái “đắt giá” nhất, tránh nhồi quá nhiều."
-   },
-   {
-    "id": "doc-18",
-    "name": "Chứng minh tài chính (Visa)",
-    "translation": "Không",
-    "usedFor": "Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Thường dùng blocked account hoặc bảo lãnh (tùy trường hợp)."
-   },
-   {
-    "id": "doc-19",
-    "name": "Blocked Account confirmation",
-    "translation": "Không",
-    "usedFor": "Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Chuẩn bị theo mức quy định năm bạn nộp (điền số chính xác khi có)."
-   },
-   {
-    "id": "doc-20",
-    "name": "Bảo hiểm y tế (confirmation)",
-    "translation": "Không",
-    "usedFor": "Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Có loại travel insurance cho giai đoạn visa + public/private khi sang Đức."
-   },
-   {
-    "id": "doc-21",
-    "name": "Đơn xin visa + tờ khai",
-    "translation": "Không",
-    "usedFor": "Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Điền đúng theo hướng dẫn LSQ/ĐSQ."
-   },
-   {
-    "id": "doc-22",
-    "name": "Lịch hẹn visa + checklist LSQ/ĐSQ",
-    "translation": "Không",
-    "usedFor": "Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Chuẩn bị đúng checklist theo nơi bạn nộp."
-   },
-   {
-    "id": "doc-23",
-    "name": "Uni-assist VPD (nếu trường yêu cầu)",
-    "translation": "Không",
-    "usedFor": "Uni-assist",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Một số trường yêu cầu VPD trước khi nộp trực tiếp."
-   },
-   {
-    "id": "doc-24",
-    "name": "Phong bì/tem/địa chỉ nhận kết quả (nếu có)",
-    "translation": "Không",
-    "usedFor": "APS/Visa",
-    "status": "todo",
-    "dueDate": "",
-    "note": "Tùy quy trình từng nơi."
-   }
+    { "sortOrder": 1, "name": "APS (Thẩm tra thạc sĩ) – Hồ sơ & kết quả", "areas": "APS,Visa", "translation": "Dịch/CC theo yêu cầu APS", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-02-15", "note": "Thời gian xử lý có thể dài; nên khởi động sớm." },
+    { "sortOrder": 2, "name": "Hộ chiếu", "areas": "Visa,Trường", "translation": "Photo công chứng (x2–x4)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-01-15", "note": "Kiểm tra hạn hộ chiếu (khuyến nghị còn hạn > 12–18 tháng)." },
+    { "sortOrder": 3, "name": "Ảnh thẻ sinh trắc học", "areas": "Visa", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-07-05", "note": "Chuẩn kích thước 3.5x4.5cm nền trắng theo yêu cầu LSQ/ĐSQ Đức." },
+    { "sortOrder": 4, "name": "Bằng tốt nghiệp ĐH", "areas": "APS,Uni-assist,Trường,Visa", "translation": "Dịch + công chứng (x2–x4)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-01-20", "note": "Nếu chưa có bằng: giấy chứng nhận tốt nghiệp tạm thời (nếu được chấp nhận)." },
+    { "sortOrder": 5, "name": "Bảng điểm ĐH (Transcript)", "areas": "APS,Uni-assist,Trường,Visa", "translation": "Dịch + công chứng (x2–x4)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-01-20", "note": "Xin bản tiếng Anh từ trường (nếu có) để giảm dịch thuật." },
+    { "sortOrder": 6, "name": "Thang điểm/Grading scale", "areas": "Uni-assist,Trường", "translation": "Dịch + công chứng (x1–x2)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-01-20", "note": "Nhiều trường yêu cầu để quy đổi/đánh giá GPA theo công thức Bavaria." },
+    { "sortOrder": 7, "name": "Giấy xác nhận tốt nghiệp/hoàn thành chương trình", "areas": "APS,Uni-assist,Trường", "translation": "Dịch + công chứng (x1–x2)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-01-20", "note": "Hữu ích nếu đang chờ cấp bằng chính thức." },
+    { "sortOrder": 8, "name": "Syllabus/Module Handbook từng môn (ĐH)", "areas": "APS,Trường", "translation": "Thường dịch chọn lọc (x1)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-01-25", "note": "Ưu tiên các môn nền DS/CS/Math/Stats/ML/DB để chứng minh tín chỉ ECTS." },
+    { "sortOrder": 9, "name": "Mô tả chương trình/chuẩn đầu ra ngành (nếu có)", "areas": "Trường", "translation": "Dịch (x1)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-02-01", "note": "Dùng khi cần chứng minh background phù hợp." },
+    { "sortOrder": 10, "name": "CV (Europass / chuẩn EU)", "areas": "Trường,Visa", "translation": "Không (viết tiếng Anh)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-02-10", "note": "1–2 trang, nhấn mạnh project/skills DS." },
+    { "sortOrder": 11, "name": "Motivation Letter / SOP", "areas": "Trường", "translation": "Không (tiếng Anh)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-03-15", "note": "Viết theo từng chương trình; tránh dùng 1 bản cho tất cả." },
+    { "sortOrder": 12, "name": "Thư giới thiệu (LOR) 1", "areas": "Trường", "translation": "Không (tiếng Anh)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-03-10", "note": "Xác định người viết + deadline nội bộ." },
+    { "sortOrder": 13, "name": "Thư giới thiệu (LOR) 2", "areas": "Trường", "translation": "Không (tiếng Anh)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-03-10", "note": "Có thể cần bản ký tay + đóng dấu (tùy trường)." },
+    { "sortOrder": 14, "name": "Chứng chỉ tiếng Anh (IELTS/TOEFL)", "areas": "Trường,Visa", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-03-20", "note": "DS taught in English thường yêu cầu IELTS 6.5–7.0; kiểm tra điểm tối thiểu từng trường." },
+    { "sortOrder": 15, "name": "(Nếu có) TestDaF/Goethe (tiếng Đức)", "areas": "Trường,Visa", "translation": "Không", "progress": 0, "status": "noneed", "checked": false, "dueDate": null, "note": "Không bắt buộc nếu chương trình 100% English, nhưng biết Đức ngữ là lợi thế sống/việc." },
+    { "sortOrder": 16, "name": "Portfolio dự án (GitHub/Kaggle/Website)", "areas": "Trường", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-02-28", "note": "Link + mô tả ngắn; ưu tiên dự án ML/DS thực tế." },
+    { "sortOrder": 17, "name": "Bài báo/giải thưởng/chứng nhận khóa học", "areas": "Trường", "translation": "Dịch (tùy)", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-03-01", "note": "Chọn cái “đắt giá” nhất, tránh nhồi quá nhiều." },
+    { "sortOrder": 18, "name": "Chứng minh tài chính (Visa)", "areas": "Visa", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-07-10", "note": "Thường dùng blocked account hoặc bảo lãnh (tùy trường hợp)." },
+    { "sortOrder": 19, "name": "Blocked Account confirmation", "areas": "Visa", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-07-10", "note": "Mức quy định tham khảo 11.904 EUR/năm (cập nhật theo năm nộp)." },
+    { "sortOrder": 20, "name": "Bảo hiểm y tế (confirmation)", "areas": "Visa", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-07-10", "note": "Có loại travel insurance cho giai đoạn visa + public/private khi sang Đức." },
+    { "sortOrder": 21, "name": "Đơn xin visa + tờ khai", "areas": "Visa", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-07-12", "note": "Điền Videx online đúng theo hướng dẫn LSQ/ĐSQ Đức." },
+    { "sortOrder": 22, "name": "Lịch hẹn visa + checklist LSQ/ĐSQ", "areas": "Visa", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-07-15", "note": "Chuẩn bị đúng checklist theo nơi nộp (Hà Nội / TP.HCM)." },
+    { "sortOrder": 23, "name": "Uni-assist VPD (nếu trường yêu cầu)", "areas": "Uni-assist", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-04-05", "note": "Bắt buộc với TUM và một số trường yêu cầu VPD trước khi nộp trực tiếp." },
+    { "sortOrder": 24, "name": "Phong bì/tem/địa chỉ nhận kết quả (nếu có)", "areas": "APS,Visa", "translation": "Không", "progress": 0, "status": "todo", "checked": false, "dueDate": "2027-07-15", "note": "Tùy quy trình từng nơi." }
   ],
   "universities": [
-   {
-    "id": "uni-1",
-    "name": "TU München (TUM)",
-    "program": "Data Engineering & Analytics / CS",
-    "portal": "Trực tiếp (cổng trường)",
-    "deadline": "",
-    "requirements": "Nền tảng Toán/CS; English proof; có thể yêu cầu GRE/điều kiện riêng theo năm",
-    "status": "Đang chuẩn bị"
-   },
-   {
-    "id": "uni-2",
-    "name": "LMU München",
-    "program": "Data Science / Statistics",
-    "portal": "Trực tiếp (cổng trường)",
-    "deadline": "",
-    "requirements": "Nền Toán/Stats/CS; English proof; cạnh tranh cao",
-    "status": "Đang chuẩn bị"
-   },
-   {
-    "id": "uni-3",
-    "name": "RWTH Aachen",
-    "program": "Data Science / Computer Science track (tùy chương trình)",
-    "portal": "Trực tiếp hoặc Uni-assist (tùy program)",
-    "deadline": "",
-    "requirements": "Nền CS/Math; English proof; kiểm tra yêu cầu ECTS",
-    "status": "Đang chuẩn bị"
-   },
-   {
-    "id": "uni-4",
-    "name": "TU Berlin",
-    "program": "Computer Science / Data-related track (tùy program)",
-    "portal": "Uni-assist hoặc trực tiếp (tùy program)",
-    "deadline": "",
-    "requirements": "Background phù hợp; English proof; chú ý chứng minh ECTS",
-    "status": "Đang chuẩn bị"
-   },
-   {
-    "id": "uni-5",
-    "name": "Universität Mannheim",
-    "program": "Mannheim Master in Data Science",
-    "portal": "Trực tiếp (cổng trường)",
-    "deadline": "",
-    "requirements": "Thường yêu cầu Stats/Math/Programming mạnh; English proof",
-    "status": "Đang chuẩn bị"
-   }
+    {
+      "sortOrder": 1,
+      "status": "Đang chuẩn bị",
+      "name": "TU München (TUM)",
+      "program": "M.Sc. Data Engineering and Analytics",
+      "location": "Munich, Bavaria",
+      "major": "Data Science / Data Engineering",
+      "tuitionFee": "~€4,000–€6,000/semester (non-EU) + ~€85 semester fee",
+      "applicationMethod": "Trực tiếp (TUMonline) + VPD qua uni-assist",
+      "applicationPeriod": "Winter: 01/04 – 31/05 · Summer: 01/10 – 30/11",
+      "deadline": "2027-05-31",
+      "vpdRequired": true,
+      "testAsRequired": false,
+      "germanRequired": false,
+      "admissionNotes": "Xét điểm quy trình Aptitude Assessment; cần nền Toán/CS mạnh; ứng viên ngoài EU thường cần GRE (kiểm tra quy định từng năm).",
+      "englishRequirement": "IELTS ≥ 6.5 hoặc TOEFL iBT ≥ 88",
+      "requiredDocuments": "- Bằng ĐH & Bảng điểm\n- APS & VPD (uni-assist)\n- Module Handbook (Curriculum Analysis)\n- CV, Essay/SOP, IELTS/TOEFL, GRE (nếu yêu cầu)",
+      "link": "https://www.tum.de/en/studies/degree-programs/detail/data-engineering-and-analytics-master-of-science-msc",
+      "courseObjectives": "Đào tạo chuyên sâu về xử lý dữ liệu lớn, hệ thống phân tán và phân tích dữ liệu quy mô lớn.",
+      "curriculumHighlights": "Big Data Systems, Machine Learning, Data Analytics, Distributed Databases, Interdisciplinary Projects.",
+      "careerPaths": "Data Engineer, Machine Learning Engineer, Data Scientist, Big Data Architect.",
+      "notes": "Trường top 1 Đức về kỹ thuật; lưu ý chính sách học phí cho sinh viên ngoài EU và xin học bổng miễn giảm."
+    },
+    {
+      "sortOrder": 2,
+      "status": "Đang chuẩn bị",
+      "name": "LMU München",
+      "program": "M.Sc. Data Science",
+      "location": "Munich, Bavaria",
+      "major": "Data Science & Statistics",
+      "tuitionFee": "Miễn học phí · ~€85/semester (Semesterbeitrag)",
+      "applicationMethod": "Trực tiếp (cổng trường + International Office)",
+      "applicationPeriod": "Winter only: 01/04 – 01/06 (kiểm tra hạn International Office 15/07)",
+      "deadline": "2027-06-01",
+      "vpdRequired": false,
+      "testAsRequired": false,
+      "germanRequired": false,
+      "admissionNotes": "Cạnh tranh rất cao; yêu cầu nền tảng Thống kê, Toán & Tin học vững; có thể có bài đánh giá đầu vào.",
+      "englishRequirement": "B2/C1 · IELTS ≥ 6.5 hoặc TOEFL iBT ≥ 80–90",
+      "requiredDocuments": "- Bằng ĐH & Bảng điểm\n- Chứng chỉ APS\n- Module Handbook\n- CV, Motivation Letter, Essay (tùy năm), IELTS",
+      "link": "https://www.m-datascience.mathematik-informatik-statistik.uni-muenchen.de",
+      "courseObjectives": "Kết hợp chặt chẽ giữa Thống kê hiện đại và Khoa học máy tính để giải quyết bài toán dữ liệu phức tạp.",
+      "curriculumHighlights": "Statistical Learning, Deep Learning, Data Mining, Human Computation, Practical Data Science Lab.",
+      "careerPaths": "Data Scientist, Applied Statistician, Research Scientist, Quantitative Analyst.",
+      "notes": "Miễn học phí, nằm tại Munich; chương trình rất mạnh về thống kê toán học."
+    },
+    {
+      "sortOrder": 3,
+      "status": "Đang chuẩn bị",
+      "name": "RWTH Aachen",
+      "program": "M.Sc. Data Science",
+      "location": "Aachen, North Rhine-Westphalia",
+      "major": "Data Science / Computer Science",
+      "tuitionFee": "Miễn học phí · ~€310/semester (gồm vé tàu)",
+      "applicationMethod": "Trực tiếp (RWTHonline)",
+      "applicationPeriod": "Winter (Non-EU): hạn 01/03 · Summer (Non-EU): hạn 01/09",
+      "deadline": "2027-03-01",
+      "vpdRequired": false,
+      "testAsRequired": false,
+      "germanRequired": false,
+      "admissionNotes": "Hạn nộp cho sinh viên ngoài EU rất sớm (01/03)! Kiểm tra kỹ yêu cầu ECTS môn Toán (≥22 ECTS) và CS (≥34 ECTS); có yêu cầu GRE cho ứng viên ngoài EU.",
+      "englishRequirement": "B2 · IELTS ≥ 5.5–6.5 hoặc TOEFL iBT ≥ 90",
+      "requiredDocuments": "- Bằng ĐH & Bảng điểm + APS\n- Module Handbook chi tiết ECTS\n- Chứng chỉ tiếng Anh & GRE\n- CV",
+      "link": "https://www.rwth-aachen.de/cms/root/studium/Vor-dem-Studium/Studiengaenge/Liste-Aktuelle-Studiengaenge/Studiengangbeschreibung/~pzq/Data-Science-M-Sc-/?lidx=1",
+      "courseObjectives": "Xây dựng nền tảng lý thuyết và thực hành về phân tích dữ liệu, khoa học tính toán và hệ thống thông minh.",
+      "curriculumHighlights": "Machine Learning, Process Mining, Data Management, Computational Mathematics, Application Domain electives.",
+      "careerPaths": "Data Scientist, ML Engineer, Process Mining Specialist, AI Researcher.",
+      "notes": "Chú ý deadline 01/03 rất sớm! Chi phí sinh hoạt ở Aachen rẻ hơn Munich đáng kể."
+    },
+    {
+      "sortOrder": 4,
+      "status": "Đang chuẩn bị",
+      "name": "TU Berlin",
+      "program": "M.Sc. Computer Science (Data Science / AI Track)",
+      "location": "Berlin",
+      "major": "Computer Science / Data Science",
+      "tuitionFee": "Miễn học phí · ~€320/semester (gồm Deutschlandticket)",
+      "applicationMethod": "uni-assist",
+      "applicationPeriod": "Winter: 01/04 – 31/05 (hoặc 15/07 tùy chương trình)",
+      "deadline": "2027-05-31",
+      "vpdRequired": false,
+      "testAsRequired": false,
+      "germanRequired": false,
+      "admissionNotes": "Yêu cầu nghiêm ngặt về số tín chỉ ECTS ngành Computer Science (đặc biệt Theoretical CS ≥ 12 ECTS); kiểm tra kỹ trước khi nộp uni-assist.",
+      "englishRequirement": "B2 · IELTS ≥ 6.5 hoặc TOEFL iBT ≥ 87",
+      "requiredDocuments": "- Bằng ĐH & Bảng điểm + APS\n- Module Handbook\n- Chứng chỉ tiếng Anh\n- Bảng tự khai tín chỉ ECTS (theo mẫu TU Berlin)",
+      "link": "https://www.tu.berlin/en/studying/study-programs/all-programs-offered/study-course/computer-science-informatik-m-sc",
+      "courseObjectives": "Đào tạo thạc sĩ Khoa học máy tính linh hoạt, cho phép chuyên sâu vào AI, Machine Learning và Big Data.",
+      "curriculumHighlights": "Machine Learning, Scalable Data Systems, Deep Learning, Computer Vision, NLP, Research Seminars.",
+      "careerPaths": "Software/ML Engineer, AI Specialist, Data Engineer, Startup Tech Lead.",
+      "notes": "Berlin có hệ sinh thái startup và việc làm tiếng Anh (Working Student) rất phong phú."
+    },
+    {
+      "sortOrder": 5,
+      "status": "Đang chuẩn bị",
+      "name": "Universität Mannheim",
+      "program": "Mannheim Master in Data Science (MMDS)",
+      "location": "Mannheim, Baden-Württemberg",
+      "major": "Data Science",
+      "tuitionFee": "€1,500/semester (non-EU tại bang BW) + ~€195 semester fee",
+      "applicationMethod": "Trực tiếp (Portal2)",
+      "applicationPeriod": "Fall/Winter: 01/04 – 31/05 · Spring: 01/10 – 15/11",
+      "deadline": "2027-05-31",
+      "vpdRequired": false,
+      "testAsRequired": false,
+      "germanRequired": false,
+      "admissionNotes": "Cần tối thiểu 48 ECTS môn Toán/Thống kê/Tin học/Kinh tế lượng; tuyển sinh theo thang điểm GPA + bài luận/kinh nghiệm.",
+      "englishRequirement": "C1 · IELTS ≥ 6.5–7.0 hoặc TOEFL iBT ≥ 90–100",
+      "requiredDocuments": "- Bằng ĐH & Bảng điểm + APS\n- Module Handbook\n- Chứng chỉ tiếng Anh\n- CV, bảng khai ECTS",
+      "link": "https://www.wim.uni-mannheim.de/en/academics/organizing-your-studies/mannheim-master-in-data-science/",
+      "courseObjectives": "Chương trình liên ngành mạnh về Quản trị dữ liệu, Phân tích dữ liệu kinh doanh và Học máy ứng dụng.",
+      "curriculumHighlights": "Data Mining, Large-Scale Data Management, Applied Statistics, Web Mining, Team Project.",
+      "careerPaths": "Data Scientist, Business Analytics Consultant, BI Architect, Data Engineer.",
+      "notes": "Rất uy tín về kinh tế & dữ liệu tại Đức; bang Baden-Württemberg thu €1,500/kỳ với SV ngoài EU."
+    }
   ],
   "budget": [
-   {
-    "id": "bg-1",
-    "item": "Phí APS",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Kiểm tra mức phí mới nhất theo thời điểm nộp."
-   },
-   {
-    "id": "bg-2",
-    "item": "Dịch thuật + công chứng (bằng, bảng điểm, giấy tờ)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Gom dịch theo batch, ưu tiên giấy tờ cốt lõi trước."
-   },
-   {
-    "id": "bg-3",
-    "item": "Phí thi IELTS/TOEFL",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Canh voucher/đợt giảm (nếu có), thi sớm để kịp plan thi lại."
-   },
-   {
-    "id": "bg-4",
-    "item": "Phí gửi bảng điểm/chứng chỉ (nếu cần bản cứng)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Nhiều nơi chấp nhận bản điện tử; kiểm tra trước khi gửi DHL."
-   },
-   {
-    "id": "bg-5",
-    "item": "Uni-assist (trường đầu)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Mức phí theo số lượng trường; nộp đúng định dạng để tránh tốn phí lại."
-   },
-   {
-    "id": "bg-6",
-    "item": "Uni-assist (mỗi trường tiếp theo)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Chỉ nộp thêm khi hồ sơ đã “ready” để giảm rủi ro sai sót."
-   },
-   {
-    "id": "bg-7",
-    "item": "Phí nộp hồ sơ trực tiếp (application fee)",
-    "eur": "0",
-    "vnd": "0",
-    "paid": false,
-    "note": "Nhiều trường công ở Đức miễn phí, nhưng có ngoại lệ."
-   },
-   {
-    "id": "bg-8",
-    "item": "Chuyển phát nhanh (DHL/EMS)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Gộp gửi, theo dõi tracking."
-   },
-   {
-    "id": "bg-9",
-    "item": "Blocked Account (tổng mức yêu cầu)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Khoản để chứng minh tài chính, không phải phí mất; dùng cho sinh hoạt hàng tháng."
-   },
-   {
-    "id": "bg-10",
-    "item": "Phí mở/duy trì blocked account (service fee)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "So sánh nhà cung cấp (phí mở + phí duy trì + tốc độ)."
-   },
-   {
-    "id": "bg-11",
-    "item": "Bảo hiểm giai đoạn xin visa (travel)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Mua đúng chuẩn yêu cầu visa (mức cover, thời hạn)."
-   },
-   {
-    "id": "bg-12",
-    "item": "Bảo hiểm y tế khi sang Đức (public/private)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Sinh viên thường chọn public; tùy trường hợp tuổi/ngành."
-   },
-   {
-    "id": "bg-13",
-    "item": "Phí visa",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Kiểm tra phí theo loại visa (student/applicant)."
-   },
-   {
-    "id": "bg-14",
-    "item": "Vé máy bay 1 chiều",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Canh khuyến mãi, bay sớm vừa đủ để ổn định chỗ ở."
-   },
-   {
-    "id": "bg-15",
-    "item": "Chỗ ở tháng đầu (deposit + rent)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "WG thường cần deposit 1–3 tháng; chuẩn bị buffer."
-   },
-   {
-    "id": "bg-16",
-    "item": "Semesterbeitrag (kỳ 1)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Khác nhau theo trường (~vài trăm EUR)."
-   },
-   {
-    "id": "bg-17",
-    "item": "Chi phí setup ban đầu (sim, đồ dùng, vé tàu tháng đầu)",
-    "eur": "",
-    "vnd": "",
-    "paid": false,
-    "note": "Mua đồ second-hand, dùng student ticket nếu có trong semester fee."
-   }
-  ]
- },
- "ielts": {
-  "target": {
-   "overall": 7.0,
-   "listening": 7.5,
-   "reading": 7.5,
-   "writing": 6.5,
-   "speaking": 6.5,
-   "examDate": "",
-   "testType": "Academic"
+    { "sortOrder": 1, "item": "Phí APS", "eur": 250, "vnd": 6875000, "paid": false, "note": "Kiểm tra mức phí mới nhất trên aps-vietnam.de theo thời điểm nộp." },
+    { "sortOrder": 2, "item": "Dịch thuật + công chứng (bằng, bảng điểm, giấy tờ)", "eur": 120, "vnd": 3300000, "paid": false, "note": "Gom dịch theo batch, ưu tiên giấy tờ cốt lõi trước." },
+    { "sortOrder": 3, "item": "Phí thi IELTS/TOEFL", "eur": 170, "vnd": 4675000, "paid": false, "note": "Canh voucher/đợt giảm (nếu có), thi sớm để kịp plan thi lại." },
+    { "sortOrder": 4, "item": "Phí gửi bảng điểm/chứng chỉ (nếu cần bản cứng)", "eur": 40, "vnd": 1100000, "paid": false, "note": "Nhiều nơi chấp nhận bản điện tử; kiểm tra trước khi gửi DHL." },
+    { "sortOrder": 5, "item": "Uni-assist (trường đầu)", "eur": 75, "vnd": 2062500, "paid": false, "note": "Mức phí chuẩn cho trường đầu tiên (75 EUR); nộp đúng định dạng để tránh tốn phí lại." },
+    { "sortOrder": 6, "item": "Uni-assist (mỗi trường tiếp theo)", "eur": 60, "vnd": 1650000, "paid": false, "note": "30 EUR/trường tiếp theo (ước tính thêm 2 trường)." },
+    { "sortOrder": 7, "item": "Phí nộp hồ sơ trực tiếp (application fee)", "eur": 0, "vnd": 0, "paid": false, "note": "Nhiều trường công ở Đức miễn phí nộp hồ sơ trực tiếp." },
+    { "sortOrder": 8, "item": "Chuyển phát nhanh (DHL/EMS)", "eur": 50, "vnd": 1375000, "paid": false, "note": "Gộp gửi, theo dõi tracking." },
+    { "sortOrder": 9, "item": "Blocked Account (tổng mức yêu cầu)", "eur": 11904, "vnd": 327360000, "paid": false, "note": "Khoản để chứng minh tài chính (992 EUR/tháng x 12), không phải phí mất; rút dùng hàng tháng tại Đức." },
+    { "sortOrder": 10, "item": "Phí mở/duy trì blocked account (service fee)", "eur": 110, "vnd": 3025000, "paid": false, "note": "So sánh Expatrio / Coracle / Fintiba (phí mở + phí duy trì)." },
+    { "sortOrder": 11, "item": "Bảo hiểm giai đoạn xin visa (travel)", "eur": 60, "vnd": 1650000, "paid": false, "note": "Mua đúng chuẩn yêu cầu visa (cover ≥ 30.000 EUR); thường miễn phí nếu đi kèm gói Expatrio." },
+    { "sortOrder": 12, "item": "Bảo hiểm y tế khi sang Đức (public/private - tháng đầu)", "eur": 135, "vnd": 3712500, "paid": false, "note": "Bảo hiểm công sinh viên (TK/AOK/Barmer) khoảng ~130–140 EUR/tháng." },
+    { "sortOrder": 13, "item": "Phí visa", "eur": 75, "vnd": 2062500, "paid": false, "note": "Lệ phí thị thực quốc gia Đức (National Visa D) là 75 EUR + phí dịch vụ VFS (nếu nộp qua VFS)." },
+    { "sortOrder": 14, "item": "Vé máy bay 1 chiều", "eur": 850, "vnd": 23375000, "paid": false, "note": "Canh khuyến mãi, đặt sớm trước 2–3 tháng; kiểm tra hành lý ký gửi cho sinh viên." },
+    { "sortOrder": 15, "item": "Chỗ ở tháng đầu (deposit + rent)", "eur": 1200, "vnd": 33000000, "paid": false, "note": "WG/KTX thường cần tiền cọc (Kaution) 1–2 tháng + tiền thuê tháng đầu." },
+    { "sortOrder": 16, "item": "Semesterbeitrag (kỳ 1)", "eur": 320, "vnd": 8800000, "paid": false, "note": "Khác nhau theo trường (~85–350 EUR/kỳ, thường kèm vé giao thông công cộng)." },
+    { "sortOrder": 17, "item": "Chi phí setup ban đầu (sim, đồ dùng, vé tàu tháng đầu)", "eur": 300, "vnd": 8250000, "paid": false, "note": "Mua đồ second-hand trên Kleinanzeigen, dùng student ticket trong semester fee." }
+  ],
+  "ieltsTarget": {
+    "overall": 7.0,
+    "listening": 7.5,
+    "reading": 7.5,
+    "writing": 6.5,
+    "speaking": 6.5,
+    "examDate": "2027-02-20",
+    "testType": "Academic"
   },
-  "tests": [],
+  "ieltsTests": [],
   "practiceTasks": [
-   {
-    "id": "pt-1",
-    "title": "Làm đề thử đầu vào (Diagnostic Full Test) để biết trình độ hiện tại",
-    "skill": "Full Test",
-    "dueDate": "",
-    "duration": 165,
-    "status": "todo",
-    "note": "Ghi lại điểm từng phần vào mục Nhật ký làm đề."
-   },
-   {
-    "id": "pt-2",
-    "title": "Luyện Listening Section 3 & 4 (Multiple Choice & Note Completion)",
-    "skill": "Listening",
-    "dueDate": "",
-    "duration": 40,
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "pt-3",
-    "title": "Luyện Reading Passage 2 & 3 (True/False/Not Given & Matching Headings)",
-    "skill": "Reading",
-    "dueDate": "",
-    "duration": 45,
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "pt-4",
-    "title": "Viết Writing Task 1 (Biểu đồ đường / bảng) & bấm giờ 20 phút",
-    "skill": "Writing",
-    "dueDate": "",
-    "duration": 20,
-    "status": "todo",
-    "note": ""
-   },
-   {
-    "id": "pt-5",
-    "title": "Luyện Speaking Part 2 Cue Card + ghi âm tự nghe lại",
-    "skill": "Speaking",
-    "dueDate": "",
-    "duration": 30,
-    "status": "todo",
-    "note": ""
-   }
-  ]
- },
- "customPlans": []
+    { "sortOrder": 1, "title": "Làm đề thử đầu vào (Diagnostic Full Test) để biết trình độ hiện tại", "skill": "Full Test", "dueDate": "2026-12-01", "duration": 165, "status": "todo", "note": "Ghi lại điểm từng phần vào mục Nhật ký làm đề." },
+    { "sortOrder": 2, "title": "Luyện Listening Section 3 & 4 (Multiple Choice & Note Completion)", "skill": "Listening", "dueDate": "2026-12-05", "duration": 40, "status": "todo", "note": "" },
+    { "sortOrder": 3, "title": "Luyện Reading Passage 2 & 3 (True/False/Not Given & Matching Headings)", "skill": "Reading", "dueDate": "2026-12-08", "duration": 45, "status": "todo", "note": "" },
+    { "sortOrder": 4, "title": "Viết Writing Task 1 (Biểu đồ đường / bảng) & bấm giờ 20 phút", "skill": "Writing", "dueDate": "2026-12-12", "duration": 20, "status": "todo", "note": "" },
+    { "sortOrder": 5, "title": "Luyện Speaking Part 2 Cue Card + ghi âm tự nghe lại", "skill": "Speaking", "dueDate": "2026-12-15", "duration": 30, "status": "todo", "note": "" }
+  ],
+  "customPlans": []
 }
