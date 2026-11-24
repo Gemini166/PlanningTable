@@ -73,9 +73,22 @@
                     <input type="date" class="form-input" @bind="_draft.DueDate" />
                 </div>
             </div>
-            @if (_draft.StartDate is { } s && _draft.DueDate is { } d)
+            @if (_draft.StartDate is not null || _draft.DueDate is not null)
             {
-                <div class="form-hint">⏱ Thời lượng: <strong>@(d.DayNumber - s.DayNumber + 1) ngày</strong></div>
+                <div class="form-hint" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+                    @if (_draft.StartDate is { } s && _draft.DueDate is { } d)
+                    {
+                        <span>⏱ Thời lượng: <strong>@(d.DayNumber - s.DayNumber + 1) ngày</strong></span>
+                    }
+                    else
+                    {
+                        <span></span>
+                    }
+                    <button type="button" class="btn btn-danger btn-sm" style="padding:3px 9px;font-size:0.74rem"
+                            @onclick="() => { _draft.StartDate = null; _draft.DueDate = null; _error = null; }">
+                        ✕ Xóa mốc thời gian
+                    </button>
+                </div>
             }
             <div class="form-group">
                 <label class="form-label">Ghi chú</label>
@@ -175,13 +188,15 @@
         await OnChanged.InvokeAsync();
     }
 
-    private async Task Schedule((GanttRow Row, DateOnly Start, DateOnly End) a)
+    private async Task Schedule((GanttRow Row, DateOnly? Start, DateOnly? End) a)
     {
         var t = (TimelineTask)a.Row.Item!;
         t.StartDate = a.Start;
         t.DueDate = a.End;
         await Store.UpdateAsync(t);
-        Ui.Toast($"Đã đặt mốc {Fmt.Date(t.StartDate)} → {Fmt.Date(t.DueDate)}");
+        Ui.Toast(a.Start is null && a.End is null
+            ? "Đã xóa mốc thời gian"
+            : $"Đã đặt mốc {Fmt.Date(t.StartDate)} → {Fmt.Date(t.DueDate)}");
         await OnChanged.InvokeAsync();
     }
 

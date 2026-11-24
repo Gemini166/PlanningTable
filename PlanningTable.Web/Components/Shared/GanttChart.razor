@@ -113,7 +113,15 @@
                                         <span class="gantt-bar-days">@r.Days ngày</span>
                                     }
                                 </div>
-                                <div class="gantt-bar-label @(r.IsGroup ? "summary" : "")" style="left:@Px(left + width + 8)">
+                                @if (!r.IsGroup && OnSchedule.HasDelegate)
+                                {
+                                    <button type="button" class="gantt-bar-clear"
+                                            style="left:@Px(left + width + 4)"
+                                            title="Xóa mốc thời gian"
+                                            aria-label="Xóa mốc thời gian"
+                                            @onclick="() => ClearDates(r)" @onclick:stopPropagation="true">×</button>
+                                }
+                                <div class="gantt-bar-label @(r.IsGroup ? "summary" : "")" style="left:@Px(left + width + (!r.IsGroup && OnSchedule.HasDelegate ? 28 : 8))">
                                     @if (!r.IsGroup && width < 54)
                                     {
                                         <strong>@r.Days ngày · </strong>
@@ -123,9 +131,10 @@
                             }
                             else if (!r.IsGroup && OnSchedule.HasDelegate)
                             {
-                                <button type="button" class="gantt-add-date" style="left:@Px(TodayX ?? 12)"
+                                <button type="button" class="gantt-add-date" style="left:@Px((TodayX ?? 12) + 8)"
                                         @onclick="() => OpenDatePicker(r)">
-                                    + Chọn mốc thời gian
+                                    <span class="gantt-add-plus">+</span>
+                                    <span>Chọn mốc thời gian</span>
                                 </button>
                             }
                         </div>
@@ -187,8 +196,8 @@
     [Parameter] public EventCallback<GanttRow> OnRowClick { get; set; }
     [Parameter] public EventCallback<GanttRow> OnStatusClick { get; set; }
     [Parameter] public EventCallback<GanttRow> OnGroupToggle { get; set; }
-    /// <summary>Đặt mốc thời gian (ngày bắt đầu & hạn hoàn thành) cho đầu việc.</summary>
-    [Parameter] public EventCallback<(GanttRow Row, DateOnly Start, DateOnly End)> OnSchedule { get; set; }
+    /// <summary>Đặt hoặc xóa mốc thời gian (Start &amp; End đều null = xóa mốc).</summary>
+    [Parameter] public EventCallback<(GanttRow Row, DateOnly? Start, DateOnly? End)> OnSchedule { get; set; }
 
     private record Scale(string Key, string Label, double PxPerDay);
     private static readonly Scale[] Scales =
@@ -339,6 +348,8 @@
         CloseDatePicker();
         await OnSchedule.InvokeAsync((row, s, e));
     }
+
+    private Task ClearDates(GanttRow r) => OnSchedule.InvokeAsync((r, null, null));
 
     private async Task ScrollToToday()
     {

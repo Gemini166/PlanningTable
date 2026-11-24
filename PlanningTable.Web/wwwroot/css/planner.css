@@ -1,4 +1,4 @@
-﻿/* =========================================================
+/* =========================================================
    Bổ sung cho bản C# / Blazor: layout 2 cột, Gantt timeline,
    bảng dạng spreadsheet (giấy tờ, tìm trường), tag màu.
    ========================================================= */
@@ -423,21 +423,81 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
   font-weight: 600;
-  color: var(--primary);
-  border: 1px dashed var(--primary-border);
-  border-radius: 7px;
-  padding: 4px 10px;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  padding: 3px 10px 3px 5px;
   white-space: nowrap;
-  background: var(--primary-soft);
+  background: #eff6ff;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.08);
   cursor: pointer;
-  transition: background 0.14s, border-color 0.14s, color 0.14s;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.12s;
+}
+.gantt-add-plus {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.14s, color 0.14s;
 }
 .gantt-add-date:hover {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: #2563eb;
+  border-color: #2563eb;
   color: #ffffff;
+  transform: translateY(-50%) scale(1.02);
+}
+.gantt-add-date:hover .gantt-add-plus {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+[data-theme="dark"] .gantt-add-date {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(96, 165, 250, 0.35);
+  color: #93c5fd;
+}
+[data-theme="dark"] .gantt-add-date:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.gantt-bar-clear {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.72;
+  transition: opacity 0.12s, background 0.12s, color 0.12s, border-color 0.12s;
+}
+.gantt-bar-clear:hover {
+  opacity: 1;
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .gantt-empty {
