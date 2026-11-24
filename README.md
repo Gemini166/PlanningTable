@@ -7,16 +7,6 @@ luyện thi IELTS và các bảng kế hoạch cá nhân.
 - **Dữ liệu lưu trong trình duyệt của mỗi người** (IndexedDB), không gửi lên máy chủ nào.
   Mỗi người mở link sẽ có bảng kế hoạch riêng, bắt đầu từ dữ liệu mẫu.
 
-## Chạy trên máy
-
-Cần cài [.NET 9 SDK](https://dotnet.microsoft.com/download).
-
-```bash
-cd PlanningTable.Web
-dotnet run
-```
-
-Mở http://localhost:5136 — hoặc mở `PlanningTable.sln` bằng Visual Studio và bấm F5.
 
 ## Đưa lên GitHub Pages
 
