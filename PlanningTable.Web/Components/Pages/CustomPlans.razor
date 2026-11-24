@@ -1,0 +1,407 @@
+@page "/ke-hoach"
+@inject PlannerStore Store
+@inject UiService Ui
+
+<PageTitle>Bảng kế hoạch mới</PageTitle>
+
+@if (_loading)
+{
+    <div class="card empty-state"><p>Đang tải dữ liệu…</p></div>
+    return;
+}
+
+<div class="workspace-2col">
+    <aside class="ws-left">
+        <div class="card-compact">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                <span class="side-menu-title" style="padding:0">Các bảng kế hoạch</span>
+                <button class="btn btn-primary btn-sm" style="padding:4px 9px;font-size:0.75rem" type="button" @onclick="() => OpenPlan(null)">+ Mới</button>
+            </div>
+            @if (_plans.Count == 0)
+            {
+                <p style="font-size:0.8rem;color:var(--text-muted);margin:6px 2px">Chưa có bảng nào. Bấm <strong>+ Mới</strong> để tạo bảng kế hoạch riêng.</p>
+            }
+            else
+            {
+                <nav class="side-menu">
+                    @foreach (var p in _plans)
+                    {
+                        var pl = p;
+                        <button class="side-menu-item @(pl == Active ? "active" : "")" type="button" @onclick="() => Select(pl)">
+                            <span class="side-menu-left" style="min-width:0">
+                                <span>@pl.Icon</span>
+                                <span style="overflow:hidden;text-overflow:ellipsis">@pl.Name</span>
+                            </span>
+                            <span class="side-menu-count">@pl.Tasks.Count(t => t.Status == Status.Done)/@pl.Tasks.Count</span>
+                        </button>
+                    }
+                </nav>
+            }
+        </div>
+    </aside>
+
+    <section class="ws-main">
+        @if (Active is not { } plan)
+        {
+            <div class="card empty-state" style="padding:44px 20px">
+                <div class="empty-emoji">✨</div>
+                <h3>Tạo bảng kế hoạch mới của riêng bạn</h3>
+                <p>Phù hợp cho kế hoạch học ngoại ngữ, làm đồ án, dự án cá nhân hoặc du lịch — có timeline dạng Gantt.</p>
+                <button class="btn btn-primary" type="button" @onclick="() => OpenPlan(null)">+ Tạo bảng kế hoạch mới</button>
+            </div>
+        }
+        else
+        {
+            var total = plan.Tasks.Count;
+            var done = plan.Tasks.Count(t => t.Status == Status.Done);
+            <div class="card-compact plan-header" style="border-left:4px solid @plan.Color">
+                <div style="display:flex;align-items:center;gap:10px;min-width:0">
+                    <span style="font-size:1.5rem">@plan.Icon</span>
+                    <div style="min-width:0">
+                        <h2 style="margin:0;font-size:1.02rem;font-weight:700">@plan.Name</h2>
+                        @if (!string.IsNullOrEmpty(plan.Description))
+                        {
+                            <p style="margin:2px 0 0;font-size:0.79rem;color:var(--text-secondary)">@plan.Description</p>
+                        }
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <span class="badge badge-primary">@(total == 0 ? 0 : done * 100 / total)% (@done/@total)</span>
+                    <button class="mini-btn" type="button" title="Sửa bảng" @onclick="() => OpenPlan(plan)">@Icons.Edit</button>
+                    <button class="mini-btn" type="button" title="Xóa bảng" @onclick="() => DeletePlan(plan)">@Icons.Trash</button>
+                </div>
+            </div>
+
+            <GanttChart Rows="BuildRows(plan)"
+                        EmptyText="Chưa có công việc nào — bấm “+ Thêm bản ghi”."
+                        OnRowClick="r => OpenTask((CustomTask)r.Item!)"
+                        OnStatusClick="r => CycleStatus((CustomTask)r.Item!)"
+                        OnGroupToggle="r => ToggleGroup(plan, r)"
+                        OnSchedule="Schedule">
+                <Toolbar>
+                    <button class="btn btn-primary btn-sm" type="button" @onclick="() => OpenTask(null)">+ Thêm bản ghi</button>
+                    <div class="chip-scroll">
+                        @foreach (var (k, lbl) in new[] { ("all", "Tất cả"), ("todo", "Chưa làm"), ("doing", "Đang làm"), ("done", "Hoàn thành") })
+                        {
+                            <button class="chip @(_filter == k ? "active" : "")" type="button" @onclick="() => _filter = k">@lbl</button>
+                        }
+                    </div>
+                </Toolbar>
+            </GanttChart>
+        }
+    </section>
+</div>
+
+@* ---------- Modal: bảng kế hoạch ---------- *@
+<Modal Visible="_planDraft is not null" Title="@(_planEditing is null ? "Tạo bảng kế hoạch mới" : "Sửa bảng kế hoạch")" OnClose="() => _planDraft = null">
+    @if (_planDraft is { } pd)
+    {
+        <form @onsubmit="SavePlan">
+            <div class="form-group">
+                <label class="form-label">Tên bảng kế hoạch</label>
+                <input class="form-input" required @bind="pd.Name" placeholder="VD: Học tiếng Đức A1-B1, Làm Portfolio..." />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mô tả ngắn</label>
+                <input class="form-input" @bind="pd.Description" placeholder="Mục tiêu chính của bảng kế hoạch này" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Biểu tượng</label>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    @foreach (var ic in PlanIcons)
+                    {
+                        var icon = ic;
+                        <button type="button" class="chip @(pd.Icon == icon ? "active" : "")" style="font-size:1.1rem;padding:5px 9px" @onclick="() => pd.Icon = icon">@icon</button>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Màu chủ đạo</label>
+                <div style="display:flex;gap:10px;align-items:center">
+                    @foreach (var c in PlanColors)
+                    {
+                        var color = c;
+                        <button type="button" aria-label="Màu @color" @onclick="() => pd.Color = color"
+                                style="width:26px;height:26px;border-radius:50%;background:@color;border:3px solid @(pd.Color == color ? "var(--text)" : "transparent");cursor:pointer"></button>
+                    }
+                </div>
+            </div>
+            @if (_planEditing is null)
+            {
+                <div class="form-group">
+                    <label class="form-label">Mẫu khởi tạo</label>
+                    <select class="form-select" @bind="_template">
+                        <option value="blank">Bảng trống (tự thêm việc)</option>
+                        <option value="study">Mẫu kế hoạch học tập</option>
+                        <option value="project">Mẫu kế hoạch dự án / công việc</option>
+                        <option value="personal">Mẫu kế hoạch cá nhân</option>
+                    </select>
+                </div>
+            }
+            <div class="form-actions">
+                <button type="button" class="btn btn-soft" @onclick="() => _planDraft = null">Hủy</button>
+                <button type="submit" class="btn btn-primary">@(_planEditing is null ? "Tạo bảng" : "Lưu thay đổi")</button>
+            </div>
+        </form>
+    }
+</Modal>
+
+@* ---------- Modal: công việc ---------- *@
+<Modal Visible="_taskDraft is not null" Title="@(_taskEditing is null ? "Thêm công việc mới" : "Sửa công việc")" OnClose="CloseTask">
+    @if (_taskDraft is { } t && Active is { } ap)
+    {
+        <form @onsubmit="SaveTask">
+            <div class="form-group">
+                <label class="form-label">Giai đoạn / Nhóm thời gian</label>
+                <input class="form-input" list="cpPhaseList" @bind="t.Phase" placeholder="VD: Tuần 1, Tháng 1..." />
+                <datalist id="cpPhaseList">
+                    @foreach (var ph in ap.Tasks.Select(x => x.Phase).Where(x => x != "").Distinct())
+                    {
+                        <option value="@ph"></option>
+                    }
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nội dung công việc</label>
+                <input class="form-input" required @bind="t.Task" placeholder="Nhập công việc cần làm..." />
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Ưu tiên</label>
+                    <select class="form-select" @bind="t.Priority">
+                        <option value="P1">P1 - Cao</option>
+                        <option value="P2">P2 - Trung bình</option>
+                        <option value="P3">P3 - Thấp</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" @bind="t.Status">
+                        <option value="todo">Chưa làm</option>
+                        <option value="doing">Đang làm</option>
+                        <option value="done">Hoàn thành</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Ngày bắt đầu</label>
+                    <input type="date" class="form-input" @bind="t.StartDate" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hạn hoàn thành</label>
+                    <input type="date" class="form-input" @bind="t.DueDate" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ghi chú</label>
+                <textarea class="form-textarea" @bind="t.Note"></textarea>
+            </div>
+            @if (_error is not null)
+            {
+                <div class="form-error">@_error</div>
+            }
+            <div class="form-actions">
+                @if (_taskEditing is not null)
+                {
+                    <button type="button" class="btn btn-danger" style="margin-right:auto" @onclick="DeleteTask">Xóa</button>
+                }
+                <button type="button" class="btn btn-soft" @onclick="CloseTask">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
+            </div>
+        </form>
+    }
+</Modal>
+
+@code {
+    private static readonly string[] PlanIcons = ["📋", "🚀", "📚", "💼", "✈️", "💪", "🎯", "💡", "💰", "🏠"];
+    private static readonly string[] PlanColors = ["#0f766e", "#2563eb", "#d97706", "#e11d48", "#6d28d9", "#0284c7"];
+    private static readonly Dictionary<string, (string Phase, string Task, string Priority)[]> Templates = new()
+    {
+        ["blank"] = [],
+        ["study"] =
+        [
+            ("Giai đoạn 1: Khởi động", "Xác định mục tiêu học tập & tài liệu chính", "P1"),
+            ("Giai đoạn 1: Khởi động", "Lập lịch học cố định hàng tuần", "P1"),
+            ("Giai đoạn 2: Thực hành", "Làm bài tập / dự án thực tế tổng hợp kiến thức", "P2"),
+            ("Giai đoạn 3: Tổng kết", "Ôn tập & kiểm tra đánh giá kết quả", "P1")
+        ],
+        ["project"] =
+        [
+            ("1. Lập kế hoạch", "Xác định phạm vi, mục tiêu & hạn chót", "P1"),
+            ("2. Thực hiện", "Triển khai các hạng mục chính", "P1"),
+            ("3. Kiểm tra & Hoàn thiện", "Rà soát chất lượng & hoàn tất bàn giao", "P2")
+        ],
+        ["personal"] =
+        [
+            ("Chuẩn bị", "Liệt kê đầu việc & dự trù ngân sách", "P1"),
+            ("Thực hiện", "Hoàn thành các mốc quan trọng", "P2")
+        ]
+    };
+
+    private bool _loading = true;
+    private List<CustomPlan> _plans = [];
+    private int? _activeId;
+    private string _filter = "all";
+    private readonly HashSet<string> _collapsed = [];
+
+    private CustomPlan? _planEditing, _planDraft;
+    private string _template = "blank";
+    private CustomTask? _taskEditing, _taskDraft;
+    private string? _error;
+
+    private CustomPlan? Active => _plans.FirstOrDefault(p => p.Id == _activeId) ?? _plans.FirstOrDefault();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _plans = await Store.ListPlansAsync();
+        _loading = false;
+    }
+
+    private void ToggleGroup(CustomPlan plan, GanttRow r)
+    {
+        var key = plan.Id + ":" + r.Label;
+        if (!_collapsed.Remove(key)) _collapsed.Add(key);
+    }
+
+    private void Select(CustomPlan p) { _activeId = p.Id; _filter = "all"; }
+
+    private List<GanttRow> BuildRows(CustomPlan plan)
+    {
+        var rows = new List<GanttRow>();
+        var n = 0;
+        var filtered = plan.Tasks.Where(t => _filter == "all" || t.Status == _filter);
+        foreach (var g in filtered.GroupBy(t => string.IsNullOrWhiteSpace(t.Phase) ? "Danh sách công việc" : t.Phase))
+        {
+            var list = g.ToList();
+            var done = list.Count(t => t.Status == Status.Done);
+            var collapsed = _collapsed.Contains(plan.Id + ":" + g.Key);
+            rows.Add(new GanttRow
+            {
+                Key = "g:" + g.Key,
+                Label = g.Key,
+                IsGroup = true,
+                Collapsed = collapsed,
+                Sub = $"{done}/{list.Count}",
+                Status = done == list.Count ? Status.Done : done > 0 ? Status.Doing : Status.Todo,
+                Start = list.Select(t => t.StartDate ?? t.DueDate).Min(),
+                End = list.Select(t => t.DueDate ?? t.StartDate).Max()
+            });
+            foreach (var t in list)
+            {
+                n++;
+                if (collapsed) continue;
+                rows.Add(new GanttRow
+                {
+                    Key = "t:" + t.Id, Number = n, Label = t.Task, Start = t.StartDate, End = t.DueDate,
+                    Status = t.Status, Priority = t.Priority, Item = t
+                });
+            }
+        }
+        return rows;
+    }
+
+    // ----- Bảng kế hoạch -----
+    private void OpenPlan(CustomPlan? p)
+    {
+        _planEditing = p;
+        _template = "blank";
+        _planDraft = p is null ? new CustomPlan() : new CustomPlan { Id = p.Id, Name = p.Name, Description = p.Description, Icon = p.Icon, Color = p.Color };
+    }
+
+    private async Task SavePlan()
+    {
+        var d = _planDraft!;
+        d.Name = d.Name.Trim();
+        d.Description = d.Description.Trim();
+        if (_planEditing is null)
+        {
+            var i = 0;
+            d.Tasks = Templates[_template].Select(x => new CustomTask { Phase = x.Phase, Task = x.Task, Priority = x.Priority, SortOrder = ++i }).ToList();
+            var created = await Store.AddAsync(d);
+            _plans.Add(created);
+            _activeId = created.Id;
+            Ui.Toast("Đã tạo bảng kế hoạch mới!");
+        }
+        else
+        {
+            _planEditing.Name = d.Name; _planEditing.Description = d.Description;
+            _planEditing.Icon = d.Icon; _planEditing.Color = d.Color;
+            await Store.UpdatePlanInfoAsync(_planEditing);
+            Ui.Toast("Đã cập nhật bảng kế hoạch");
+        }
+        _planDraft = null;
+    }
+
+    private async Task DeletePlan(CustomPlan p)
+    {
+        if (!await Ui.ConfirmAsync($"Xóa toàn bộ bảng kế hoạch \"{p.Name}\"?")) return;
+        await Store.DeletePlanAsync(p.Id);
+        _plans.Remove(p);
+        _activeId = null;
+        Ui.Toast("Đã xóa bảng kế hoạch");
+    }
+
+    // ----- Công việc -----
+    private async Task CycleStatus(CustomTask t)
+    {
+        t.Status = Fmt.NextStatus(t.Status);
+        await Store.UpdateAsync(t);
+        Ui.Toast($"Trạng thái: {Fmt.StatusLabel(t.Status)}");
+    }
+
+    private async Task Schedule((GanttRow Row, DateOnly Date) a)
+    {
+        var t = (CustomTask)a.Row.Item!;
+        t.StartDate = a.Date;
+        if (t.DueDate is null || t.DueDate < t.StartDate) t.DueDate = a.Date.AddDays(6);
+        await Store.UpdateAsync(t);
+        Ui.Toast($"Đã đặt {Fmt.Date(t.StartDate)} → {Fmt.Date(t.DueDate)}");
+    }
+
+    private void OpenTask(CustomTask? t)
+    {
+        _error = null;
+        _taskEditing = t;
+        var phase = Active?.Tasks.Select(x => x.Phase).FirstOrDefault(x => x != "") ?? "Giai đoạn 1";
+        _taskDraft = t is null ? new CustomTask { Phase = phase } : Cloner.Clone(t);
+    }
+
+    private void CloseTask() { _taskDraft = null; _taskEditing = null; }
+
+    private async Task SaveTask()
+    {
+        var t = _taskDraft!;
+        if (Active is not { } plan) return;
+        if (t.StartDate is { } s && t.DueDate is { } d && d < s)
+        {
+            _error = "Hạn hoàn thành phải sau ngày bắt đầu.";
+            return;
+        }
+        t.Phase = string.IsNullOrWhiteSpace(t.Phase) ? "Danh sách công việc" : t.Phase.Trim();
+        t.Task = t.Task.Trim();
+        if (_taskEditing is null)
+        {
+            t.CustomPlanId = plan.Id;
+            t.SortOrder = plan.Tasks.Count == 0 ? 1 : plan.Tasks.Max(x => x.SortOrder) + 1;
+            await Store.AddAsync(t); // kho tự thêm vào plan.Tasks
+            Ui.Toast("Đã thêm công việc mới");
+        }
+        else
+        {
+            Cloner.CopyInto(t, _taskEditing);
+            await Store.UpdateAsync(_taskEditing);
+            Ui.Toast("Đã cập nhật công việc");
+        }
+        CloseTask();
+    }
+
+    private async Task DeleteTask()
+    {
+        if (_taskEditing is null || Active is not { } plan || !await Ui.ConfirmAsync("Xóa công việc này?")) return;
+        await Store.DeleteAsync(_taskEditing);
+        plan.Tasks.Remove(_taskEditing);
+        CloseTask();
+        Ui.Toast("Đã xóa công việc");
+    }
+}

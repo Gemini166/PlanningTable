@@ -1,0 +1,200 @@
+@page "/lich"
+@inject PlannerStore Store
+
+<PageTitle>Lịch tổng hợp</PageTitle>
+
+@if (_loading)
+{
+    <div class="card empty-state"><p>Đang tải dữ liệu…</p></div>
+    return;
+}
+
+@{
+    var byDate = _events.GroupBy(e => e.Date).ToDictionary(g => g.Key, g => g.ToList());
+    var first = new DateOnly(_year, _month, 1);
+    var startOffset = ((int)first.DayOfWeek + 6) % 7;
+    var gridStart = first.AddDays(-startOffset);
+    var cellCount = (int)Math.Ceiling((startOffset + DateTime.DaysInMonth(_year, _month)) / 7.0) * 7;
+    var selected = byDate.GetValueOrDefault(_selected) ?? [];
+}
+
+<div class="calendar-2col">
+    <section class="card">
+        <div class="cal-header">
+            <button class="icon-btn-sm" type="button" aria-label="Tháng trước" @onclick="() => Move(-1)">‹</button>
+            <strong style="font-size:1rem">Tháng @_month, @_year</strong>
+            <div style="display:flex;gap:6px">
+                <button class="btn btn-soft btn-sm" type="button" @onclick="GoToday">Hôm nay</button>
+                <button class="icon-btn-sm" type="button" aria-label="Tháng sau" @onclick="() => Move(1)">›</button>
+            </div>
+        </div>
+        <div class="cal-grid">
+            @foreach (var w in new[] { "T2", "T3", "T4", "T5", "T6", "T7", "CN" })
+            {
+                <div class="cal-weekday">@w</div>
+            }
+            @for (var i = 0; i < cellCount; i++)
+            {
+                var day = gridStart.AddDays(i);
+                var evs = byDate.GetValueOrDefault(day) ?? [];
+                var cls = "cal-day" + (day.Month != _month ? " other-month" : "") + (day == Fmt.Today ? " today" : "") + (day == _selected ? " selected" : "");
+                <button class="@cls" type="button" @onclick="() => Select(day)">
+                    <span>@day.Day</span>
+                    @if (evs.Count > 0)
+                    {
+                        <div class="cal-dots">
+                            @foreach (var e in evs.Take(4))
+                            {
+                                <span class="cal-dot" style="background:@e.Color"></span>
+                            }
+                        </div>
+                    }
+                </button>
+            }
+        </div>
+        <div class="cal-legend">
+            <span><span class="cal-dot" style="background:#0f766e"></span> Du học</span>
+            <span><span class="cal-dot" style="background:#0284c7"></span> IELTS</span>
+            <span><span class="cal-dot" style="background:#6d28d9"></span> Kế hoạch mới</span>
+            <span><span class="cal-dot" style="background:#dc2626"></span> Deadline trường</span>
+        </div>
+    </section>
+
+    <section class="group-box">
+        <div class="group-head" style="cursor:default">
+            <h3 class="group-title">Lịch ngày @Fmt.Date(_selected)</h3>
+            <span class="group-pill">@selected.Count mục</span>
+        </div>
+        @if (selected.Count == 0)
+        {
+            <div class="empty-state" style="padding:28px 16px">
+                <div class="empty-emoji">☀️</div>
+                <h3>Không có lịch nào trong ngày này</h3>
+                <p style="margin-bottom:0">Chọn hạn chót ở các bảng kế hoạch để chúng tự hiện lên lịch.</p>
+            </div>
+        }
+        else
+        {
+            <div class="clean-list">
+                @foreach (var ev in selected)
+                {
+                    var e = ev;
+                    <div class="clean-row status-@e.Status">
+                        @if (e.Toggle is not null)
+                        {
+                            <StatusToggle Status="@e.Status" OnClick="() => Toggle(e)" />
+                        }
+                        else
+                        {
+                            <span style="width:10px;height:10px;border-radius:50%;background:@e.Color;flex-shrink:0"></span>
+                        }
+                        <div class="row-main">
+                            <p class="row-title">@e.Title</p>
+                            <div class="row-sub">
+                                <span class="badge" style="background:@(e.Color)18;color:@e.Color">@e.Source</span>
+                                <span>@Fmt.StatusLabel(e.Status)</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+</div>
+
+@code {
+    private record CalEvent(DateOnly Date, string Title, string Source, string Color, string Status, Func<Task<string>>? Toggle);
+
+    private bool _loading = true;
+    private int _year = Fmt.Today.Year, _month = Fmt.Today.Month;
+    private DateOnly _selected = Fmt.Today;
+    private List<CalEvent> _events = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEvents();
+        _loading = false;
+    }
+
+    private async Task LoadEvents()
+    {
+        var events = new List<CalEvent>();
+        var settings = await Store.GetSettingsAsync();
+        if (settings.TargetIntakeDate is { } intake)
+            events.Add(new(intake, "🎓 Ngày dự kiến nhập học", "Du học", "#0f766e", Status.Todo, null));
+
+        foreach (var t in await Store.ListAsync<TimelineTask>())
+            if (t.DueDate is { } d)
+                events.Add(new(d, t.Task, $"Timeline · {t.Phase}", "#0f766e", t.Status, () => Cycle(t)));
+
+        foreach (var doc in await Store.ListAsync<DocumentItem>())
+            if (doc.DueDate is { } d)
+                events.Add(new(d, $"Giấy tờ: {doc.Name}", "Hồ sơ du học", "#0f766e", doc.Checked ? Status.Done : doc.Status, null));
+
+        foreach (var u in await Store.ListAsync<University>())
+            if (u.Deadline is { } d)
+                events.Add(new(d, $"Deadline: {u.Name} {u.Program}".Trim(), "Nộp hồ sơ trường", "#dc2626",
+                    u.Status is "Got the Zu" or "Đã nộp" ? Status.Done : Status.Todo, null));
+
+        var target = await Store.GetIeltsTargetAsync();
+        if (target.ExamDate is { } exam)
+            events.Add(new(exam, $"🎯 Ngày thi IELTS (Mục tiêu {Fmt.Band(target.Overall)})", "IELTS", "#0284c7", Status.Todo, null));
+
+        foreach (var pt in await Store.ListAsync<PracticeTask>())
+            if (pt.DueDate is { } d)
+                events.Add(new(d, pt.Title, $"IELTS · {pt.Skill}", "#0284c7", pt.Status, async () =>
+                {
+                    pt.Status = pt.Status == Status.Done ? Status.Todo : Status.Done;
+                    await Store.UpdateAsync(pt);
+                    return pt.Status;
+                }));
+
+        foreach (var test in await Store.ListAsync<IeltsTest>())
+            if (test.Date is { } d)
+                events.Add(new(d, $"Đã làm test: {test.Title} (Band {Fmt.Band(test.Overall)})", "IELTS Test", "#0284c7", Status.Done, null));
+
+        foreach (var plan in await Store.ListPlansAsync())
+            foreach (var t in plan.Tasks)
+                if (t.DueDate is { } d)
+                    events.Add(new(d, t.Task, $"{plan.Icon} {plan.Name}", plan.Color, t.Status, async () =>
+                    {
+                        t.Status = Fmt.NextStatus(t.Status);
+                        await Store.UpdateAsync(t);
+                        return t.Status;
+                    }));
+
+        _events = events;
+    }
+
+    private async Task<string> Cycle(TimelineTask t)
+    {
+        t.Status = Fmt.NextStatus(t.Status);
+        await Store.UpdateAsync(t);
+        return t.Status;
+    }
+
+    private async Task Toggle(CalEvent e)
+    {
+        var status = await e.Toggle!();
+        var i = _events.IndexOf(e);
+        if (i >= 0) _events[i] = e with { Status = status };
+    }
+
+    private void Move(int delta)
+    {
+        var d = new DateOnly(_year, _month, 1).AddMonths(delta);
+        _year = d.Year; _month = d.Month;
+    }
+
+    private void GoToday()
+    {
+        _selected = Fmt.Today;
+        _year = _selected.Year; _month = _selected.Month;
+    }
+
+    private void Select(DateOnly d)
+    {
+        _selected = d;
+        _year = d.Year; _month = d.Month;
+    }
+}

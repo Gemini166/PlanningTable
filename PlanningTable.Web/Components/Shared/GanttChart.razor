@@ -1,0 +1,265 @@
+@inject IJSRuntime JS
+
+<div class="gantt-card">
+    <div class="gantt-toolbar">
+        <div class="gantt-toolbar-left">@Toolbar</div>
+        <div class="gantt-toolbar-right">
+            <button class="btn btn-soft btn-sm" type="button" @onclick="ScrollToToday">Hôm nay</button>
+            <div class="gantt-scale" role="tablist">
+                @foreach (var s in Scales)
+                {
+                    <button type="button" class="@(s.Key == _scale ? "active" : "")" @onclick="() => _scale = s.Key">@s.Label</button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="gantt-scroll" @ref="_scrollEl" style="--gantt-left:@(LeftWidth)px">
+        <div class="gantt-inner" style="width:@(LeftWidth + TrackWidth)px">
+            @* ---------- Header ---------- *@
+            <div class="gantt-head">
+                <div class="gantt-left gantt-head-left">
+                    @if (_leftCollapsed)
+                    {
+                        <button class="gantt-collapse" type="button" title="Mở rộng cột tên" @onclick="() => _leftCollapsed = false">@Icons.ExpandRight</button>
+                    }
+                    else
+                    {
+                        <span class="gantt-col-num">#</span>
+                        <span class="gantt-col-name">Đầu việc</span>
+                        <button class="gantt-collapse" type="button" title="Thu gọn cột tên" @onclick="() => _leftCollapsed = true">@Icons.CollapseLeft</button>
+                    }
+                </div>
+                <div class="gantt-head-track" style="width:@(TrackWidth)px">
+                    <div class="gantt-head-row top">
+                        @foreach (var seg in TopSegments())
+                        {
+                            <div class="gantt-seg" style="left:@Px(seg.Left);width:@Px(seg.Width)"><span>@seg.Label</span></div>
+                        }
+                    </div>
+                    <div class="gantt-head-row bottom">
+                        @foreach (var seg in BottomSegments())
+                        {
+                            <div class="gantt-seg @(seg.Weekend ? "weekend" : "")" style="left:@Px(seg.Left);width:@Px(seg.Width)"><span>@seg.Label</span></div>
+                        }
+                        @if (TodayX is { } thx)
+                        {
+                            <div class="gantt-today-head" style="left:@Px(thx)">Hôm nay</div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @* ---------- Body ---------- *@
+            <div class="gantt-body">
+                <div class="gantt-grid" style="left:@(LeftWidth)px;width:@(TrackWidth)px">
+                    @foreach (var seg in BottomSegments())
+                    {
+                        <div class="gantt-gridline @(seg.Weekend ? "weekend" : "")" style="left:@Px(seg.Left);width:@Px(seg.Width)"></div>
+                    }
+                    @if (TodayX is { } tx)
+                    {
+                        <div class="gantt-today" style="left:@Px(tx)"></div>
+                    }
+                </div>
+
+                @if (Rows.Count == 0)
+                {
+                    <div class="gantt-empty">@(EmptyText ?? "Chưa có đầu việc nào.")</div>
+                }
+
+                @foreach (var row in Rows)
+                {
+                    var r = row;
+                    <div class="gantt-row @(r.IsGroup ? "group" : "") status-@r.Status @(r.Collapsed ? "collapsed" : "")" @key="r.Key">
+                        <div class="gantt-left" title="@r.Label" @onclick="() => OnLeftClick(r)">
+                            @if (r.IsGroup)
+                            {
+                                <span class="gantt-chev">@Icons.Chevron</span>
+                                @if (!_leftCollapsed)
+                                {
+                                    <span class="gantt-group-name">@r.Label</span>
+                                    <span class="gantt-group-pill">@r.Sub</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="gantt-col-num">@r.Number</span>
+                                @if (!_leftCollapsed)
+                                {
+                                    <StatusToggle Status="@r.Status" OnClick="() => OnStatusClick.InvokeAsync(r)" />
+                                    <span class="gantt-name">
+                                        @if (r.Priority is { } p)
+                                        {
+                                            <span class="prio-dot @p" title="Ưu tiên @p"></span>
+                                        }
+                                        <span class="gantt-name-text">@r.Label</span>
+                                    </span>
+                                }
+                            }
+                        </div>
+                        <div class="gantt-track" style="width:@(TrackWidth)px"
+                             @onclick="e => OnTrackClick(r, e)">
+                            @if (r.HasDates)
+                            {
+                                var left = X(r.From!.Value);
+                                var width = Math.Max(BarMinWidth, r.Days * PxPerDay);
+                                var overdue = !r.IsGroup && r.Status != Data.Status.Done && r.To < Fmt.Today;
+                                <div class="gantt-bar @(r.IsGroup ? "summary" : "") bar-@r.Status @(overdue ? "overdue" : "")"
+                                     style="left:@Px(left);width:@Px(width)"
+                                     title="@r.Label · @Fmt.Date(r.From) → @Fmt.Date(r.To) (@r.Days ngày)"
+                                     @onclick="() => OnBarClick(r)" @onclick:stopPropagation="true">
+                                    @if (!r.IsGroup && width >= 54)
+                                    {
+                                        <span class="gantt-bar-days">@r.Days ngày</span>
+                                    }
+                                </div>
+                                <div class="gantt-bar-label @(r.IsGroup ? "summary" : "")" style="left:@Px(left + width + 8)">
+                                    @if (!r.IsGroup && width < 54)
+                                    {
+                                        <strong>@r.Days ngày · </strong>
+                                    }
+                                    @r.Label
+                                </div>
+                            }
+                            else if (!r.IsGroup && OnSchedule.HasDelegate)
+                            {
+                                <div class="gantt-hint" style="left:@Px(TodayX ?? 12)">Chưa đặt ngày — bấm vào timeline để đặt</div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<GanttRow> Rows { get; set; } = [];
+    [Parameter] public RenderFragment? Toolbar { get; set; }
+    [Parameter] public string? EmptyText { get; set; }
+    /// <summary>Bấm vào tên hoặc thanh thời gian của một đầu việc.</summary>
+    [Parameter] public EventCallback<GanttRow> OnRowClick { get; set; }
+    [Parameter] public EventCallback<GanttRow> OnStatusClick { get; set; }
+    [Parameter] public EventCallback<GanttRow> OnGroupToggle { get; set; }
+    /// <summary>Bấm vào vùng trống của một dòng chưa có ngày → đặt ngày bắt đầu tại vị trí bấm.</summary>
+    [Parameter] public EventCallback<(GanttRow Row, DateOnly Date)> OnSchedule { get; set; }
+
+    private record Scale(string Key, string Label, double PxPerDay);
+    private static readonly Scale[] Scales =
+    [
+        new("week", "Tuần", 34),
+        new("month", "Tháng", 13),
+        new("quarter", "Quý", 6.5),
+        new("year", "Năm", 2.6)
+    ];
+
+    private record Seg(double Left, double Width, string Label, bool Weekend = false);
+
+    private string _scale = "quarter";
+    private bool _leftCollapsed;
+    private ElementReference _scrollEl;
+    private const double BarMinWidth = 8;
+
+    private double PxPerDay => Scales.First(s => s.Key == _scale).PxPerDay;
+    private int LeftWidth => _leftCollapsed ? 64 : 330;
+
+    private DateOnly RangeStart
+    {
+        get
+        {
+            var dates = Rows.Where(r => r.HasDates).Select(r => r.From!.Value).Append(Fmt.Today);
+            var min = dates.Min().AddDays(-10);
+            return _scale switch
+            {
+                "week" => min.AddDays(-(((int)min.DayOfWeek + 6) % 7)),
+                "year" => new DateOnly(min.Year, 1, 1),
+                _ => new DateOnly(min.Year, min.Month, 1)
+            };
+        }
+    }
+
+    private DateOnly RangeEnd
+    {
+        get
+        {
+            var dates = Rows.Where(r => r.HasDates).Select(r => r.To!.Value).Append(Fmt.Today.AddMonths(6));
+            var max = dates.Max().AddMonths(_scale is "quarter" or "year" ? 3 : 1);
+            return _scale == "year" ? new DateOnly(max.Year, 12, 31) : new DateOnly(max.Year, max.Month, 1).AddMonths(1).AddDays(-1);
+        }
+    }
+
+    private double TrackWidth => (RangeEnd.DayNumber - RangeStart.DayNumber + 1) * PxPerDay;
+    private double X(DateOnly d) => (d.DayNumber - RangeStart.DayNumber) * PxPerDay;
+    private double? TodayX => Fmt.Today >= RangeStart && Fmt.Today <= RangeEnd ? X(Fmt.Today) + PxPerDay / 2 : null;
+    private static string Px(double v) => v.ToString("0.##", CultureInfo.InvariantCulture) + "px";
+
+    private IEnumerable<Seg> TopSegments()
+    {
+        var start = RangeStart; var end = RangeEnd;
+        if (_scale is "week" or "month")
+        {
+            for (var m = new DateOnly(start.Year, start.Month, 1); m <= end; m = m.AddMonths(1))
+                yield return Span(m, m.AddMonths(1).AddDays(-1), $"Tháng {m.Month}, {m.Year}");
+        }
+        else if (_scale == "quarter")
+        {
+            for (var q = new DateOnly(start.Year, (start.Month - 1) / 3 * 3 + 1, 1); q <= end; q = q.AddMonths(3))
+                yield return Span(q, q.AddMonths(3).AddDays(-1), $"Quý {(q.Month - 1) / 3 + 1} · {q.Year}");
+        }
+        else
+        {
+            for (var y = start.Year; y <= end.Year; y++)
+                yield return Span(new DateOnly(y, 1, 1), new DateOnly(y, 12, 31), y.ToString());
+        }
+    }
+
+    private IEnumerable<Seg> BottomSegments()
+    {
+        var start = RangeStart; var end = RangeEnd;
+        switch (_scale)
+        {
+            case "week":
+                for (var d = start; d <= end; d = d.AddDays(1))
+                    yield return new Seg(X(d), PxPerDay, d.Day.ToString(), d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday);
+                break;
+            case "month":
+                for (var w = start.AddDays(-(((int)start.DayOfWeek + 6) % 7)); w <= end; w = w.AddDays(7))
+                    yield return Span(w, w.AddDays(6), w.ToString("dd/MM"));
+                break;
+            default:
+                for (var m = new DateOnly(start.Year, start.Month, 1); m <= end; m = m.AddMonths(1))
+                    yield return Span(m, m.AddMonths(1).AddDays(-1), _scale == "year" ? $"T{m.Month}" : $"Tháng {m.Month}");
+                break;
+        }
+    }
+
+    private Seg Span(DateOnly from, DateOnly to, string label)
+    {
+        if (from < RangeStart) from = RangeStart;
+        if (to > RangeEnd) to = RangeEnd;
+        return new Seg(X(from), (to.DayNumber - from.DayNumber + 1) * PxPerDay, label);
+    }
+
+    private Task OnLeftClick(GanttRow r) => r.IsGroup ? OnGroupToggle.InvokeAsync(r) : OnRowClick.InvokeAsync(r);
+    private Task OnBarClick(GanttRow r) => r.IsGroup ? OnGroupToggle.InvokeAsync(r) : OnRowClick.InvokeAsync(r);
+
+    private async Task OnTrackClick(GanttRow r, MouseEventArgs e)
+    {
+        if (r.IsGroup || r.HasDates || !OnSchedule.HasDelegate) return;
+        var date = RangeStart.AddDays((int)Math.Floor(e.OffsetX / PxPerDay));
+        await OnSchedule.InvokeAsync((r, date));
+    }
+
+    private async Task ScrollToToday()
+    {
+        if (TodayX is not { } x) return;
+        try
+        {
+            // Gọi element.scrollTo(...) có sẵn của trình duyệt.
+            await JS.InvokeVoidAsync("Element.prototype.scrollTo.call", _scrollEl,
+                new { left = Math.Max(0, x - 160), behavior = "smooth" });
+        }
+        catch (JSException) { /* trình duyệt cũ: bỏ qua */ }
+    }
+}

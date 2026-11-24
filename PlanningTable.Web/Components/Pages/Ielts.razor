@@ -1,0 +1,760 @@
+@page "/ielts"
+@inject PlannerStore Store
+@inject UiService Ui
+
+<PageTitle>Luyện thi IELTS</PageTitle>
+
+@if (_loading)
+{
+    <div class="card empty-state"><p>Đang tải dữ liệu…</p></div>
+    return;
+}
+
+<div class="workspace-3col">
+    <aside class="ws-left">
+        <div class="summary-box teal-slate">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+                <div>
+                    <div class="sub-lbl">Mục tiêu (@_target.TestType)</div>
+                    <div class="big-num">Band @Fmt.Band(_target.Overall)</div>
+                </div>
+                <button class="btn btn-sm" style="background:rgba(255,255,255,0.18);color:#fff;padding:4px 9px;font-size:0.74rem" type="button" @onclick="OpenTarget">Sửa</button>
+            </div>
+            <div class="ielts-target-grid">
+                @foreach (var sk in Skills)
+                {
+                    <div class="skill-box">
+                        <span class="skill-label">@sk.Label</span>
+                        <span class="skill-score">@Fmt.Band(TargetOf(sk.Key))</span>
+                    </div>
+                }
+            </div>
+            <div class="summary-date-box">
+                <div class="sub-lbl">Ngày dự kiến thi · <strong>@ExamCountdown</strong></div>
+                <input type="date" class="summary-date-input" aria-label="Ngày thi IELTS"
+                       value="@_target.ExamDate?.ToString("yyyy-MM-dd")" @onchange="ChangeExamDate" />
+            </div>
+        </div>
+        <div class="card-compact">
+            <div class="side-menu-title">Luyện thi IELTS</div>
+            <nav class="side-menu" role="tablist">
+                <button class="side-menu-item @(_tab == "overview" ? "active" : "")" type="button" @onclick='() => _tab = "overview"'>
+                    <span class="side-menu-left"><span>📊</span><span>So sánh điểm</span></span>
+                </button>
+                <button class="side-menu-item @(_tab == "tests" ? "active" : "")" type="button" @onclick='() => _tab = "tests"'>
+                    <span class="side-menu-left"><span>📝</span><span>Bài kiểm tra thử</span></span>
+                    <span class="side-menu-count">@_tests.Count</span>
+                </button>
+                <button class="side-menu-item @(_tab == "tasks" ? "active" : "")" type="button" @onclick='() => _tab = "tasks"'>
+                    <span class="side-menu-left"><span>✅</span><span>Phần cần luyện</span></span>
+                    <span class="side-menu-count">@_tasks.Count(t => t.Status == Status.Done)/@_tasks.Count</span>
+                </button>
+            </nav>
+        </div>
+    </aside>
+
+    <section class="ws-center">
+        @if (_tab == "overview")
+        {
+            var current = CurrentScores(_compareMode);
+            <section class="card">
+                <div class="section-head">
+                    <h3 class="section-title">So sánh điểm hiện tại vs Mục tiêu</h3>
+                    <button class="btn btn-primary btn-sm" type="button" @onclick="() => OpenTest(null)">+ Nhập bài test</button>
+                </div>
+                <div class="chip-scroll" style="margin-bottom:8px">
+                    @foreach (var (k, lbl) in new[] { ("latest", "Gần nhất"), ("best", "Cao nhất"), ("avg", "Trung bình") })
+                    {
+                        <button class="chip @(_compareMode == k ? "active" : "")" type="button" @onclick="() => _compareMode = k">@lbl</button>
+                    }
+                </div>
+                @foreach (var (key, label) in CompareRows)
+                {
+                    var cur = current[key];
+                    var tgt = TargetOf(key);
+                    <div class="compare-row">
+                        <div class="compare-head">
+                            <span><strong>@label</strong> <small style="color:var(--text-muted)">(Mục tiêu @Fmt.Band(tgt))</small></span>
+                            <span>
+                                <strong>@Fmt.Band(cur)</strong> ·
+                                @if (cur is null)
+                                {
+                                    <span style="color:var(--text-muted);font-size:0.79rem">Chưa có điểm</span>
+                                }
+                                else if (cur >= tgt)
+                                {
+                                    <span class="delta-pos">@(cur == tgt ? "Đạt mục tiêu ✓" : $"+{cur - tgt:0.0} ✓")</span>
+                                }
+                                else
+                                {
+                                    <span class="delta-neg">Thiếu @((tgt - cur.Value).ToString("0.0", CultureInfo.InvariantCulture))</span>
+                                }
+                            </span>
+                        </div>
+                        <div class="compare-bars">
+                            <div class="compare-bar-current @(cur >= tgt ? "met" : "")" style="width:@Pct(cur ?? 0)%"></div>
+                            <div class="compare-target-marker" style="left:calc(@Pct(tgt)% - 1.5px)" title="Mục tiêu: @Fmt.Band(tgt)"></div>
+                        </div>
+                    </div>
+                }
+                <div style="font-size:0.74rem;color:var(--text-muted);margin-top:10px">Vạch đỏ là điểm mục tiêu · Thanh xanh lá là đã đạt mục tiêu.</div>
+            </section>
+
+            @if (_tests.Count >= 2)
+            {
+                var sorted = SortedTests;
+                var a = sorted.FirstOrDefault(t => t.Id == _compareA) ?? sorted[1];
+                var b = sorted.FirstOrDefault(t => t.Id == _compareB) ?? sorted[0];
+                <section class="card">
+                    <div class="section-head"><h3 class="section-title">So sánh 2 lần làm thử</h3></div>
+                    <div class="compare-select-row">
+                        <select class="form-select" style="font-size:0.81rem;padding:7px" value="@a.Id" @onchange="e => _compareA = int.Parse(e.Value!.ToString()!)">
+                            @foreach (var t in sorted)
+                            {
+                                <option value="@t.Id">Lần 1: @t.Title</option>
+                            }
+                        </select>
+                        <select class="form-select" style="font-size:0.81rem;padding:7px" value="@b.Id" @onchange="e => _compareB = int.Parse(e.Value!.ToString()!)">
+                            @foreach (var t in sorted)
+                            {
+                                <option value="@t.Id">Lần 2: @t.Title</option>
+                            }
+                        </select>
+                    </div>
+                    <table class="compare-table">
+                        <thead><tr><th>Phần thi</th><th>Lần 1</th><th>Lần 2</th><th>Chênh lệch</th></tr></thead>
+                        <tbody>
+                            @foreach (var (key, label) in CompareRows)
+                            {
+                                <tr>
+                                    <td>@label</td>
+                                    <td>@Fmt.Band(a.Score(key))</td>
+                                    <td><strong>@Fmt.Band(b.Score(key))</strong></td>
+                                    <td>@Diff(a.Score(key), b.Score(key))</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td>Thời gian</td>
+                                <td>@(a.TotalMinutes is { } am ? $"{am}p" : "—")</td>
+                                <td><strong>@(b.TotalMinutes is { } bm ? $"{bm}p" : "—")</strong></td>
+                                <td>@Diff(a.TotalMinutes, b.TotalMinutes, "p")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            }
+        }
+        else if (_tab == "tests")
+        {
+            <div class="panel-header-bar">
+                <h3 class="section-title">Nhật ký bài kiểm tra thử</h3>
+                <button class="btn btn-primary btn-sm" type="button" @onclick="() => OpenTest(null)">+ Nhập bài test</button>
+            </div>
+            @if (_tests.Count == 0)
+            {
+                <div class="card empty-state">
+                    <div class="empty-emoji">📝</div>
+                    <h3>Chưa có bài kiểm tra thử nào</h3>
+                    <p>Ghi lại điểm từng kỹ năng và thời gian làm bài để so sánh tiến bộ.</p>
+                    <button class="btn btn-primary" type="button" @onclick="() => OpenTest(null)">+ Nhập bài test đầu tiên</button>
+                </div>
+            }
+            else
+            {
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    @foreach (var test in SortedTests)
+                    {
+                        var t = test;
+                        <article class="card-compact" @key="t.Id">
+                            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+                                <div>
+                                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                                        <strong style="font-size:0.93rem">@t.Title</strong>
+                                        @if (t.Overall is not null)
+                                        {
+                                            <span class="badge badge-primary">Overall @Fmt.Band(t.Overall)</span>
+                                        }
+                                    </div>
+                                    <div class="row-sub" style="margin-top:4px">
+                                        @if (t.Date is not null) { <span>📅 @Fmt.Date(t.Date)</span> }
+                                        @if (t.TotalMinutes is not null) { <span>· ⏱ @t.TotalMinutes phút</span> }
+                                        <span>· @t.TestType</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="mini-btn" type="button" @onclick="() => OpenTest(t)">@Icons.Edit</button>
+                                    <button class="mini-btn" type="button" @onclick="() => DeleteTest(t)">@Icons.Trash</button>
+                                </div>
+                            </div>
+                            <div class="test-scores-grid">
+                                @foreach (var sk in Skills)
+                                {
+                                    var sc = t.Score(sk.Key);
+                                    var raw = t.Raw(sk.Key);
+                                    var dur = t.Minutes(sk.Key);
+                                    <div class="test-skill-pill" style="@(sc is null ? "opacity:0.45" : "")">
+                                        <span>@sk.Label</span>
+                                        <strong>@(sc is null ? "—" : Fmt.Band(sc))</strong>
+                                        <small>@(raw is not null ? $"{raw}/40" : "")@(raw is not null && dur is not null ? " · " : "")@(dur is not null ? $"{dur}p" : sc is null ? "Chưa làm" : "")</small>
+                                    </div>
+                                }
+                            </div>
+                            @if (!string.IsNullOrEmpty(t.Note))
+                            {
+                                <div class="row-sub" style="margin-top:8px">@t.Note</div>
+                            }
+                        </article>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="panel-header-bar">
+                <div class="chip-scroll">
+                    @foreach (var (k, lbl) in new[] { ("all", "Tất cả"), ("todo", "Chưa làm"), ("done", "Hoàn thành") })
+                    {
+                        <button class="chip @(_taskFilter == k ? "active" : "")" type="button" @onclick="() => _taskFilter = k">@lbl</button>
+                    }
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" @onclick="() => OpenTask(null)">+ Thêm phần luyện</button>
+            </div>
+            <div class="group-box">
+                <div class="clean-list">
+                    @{ var shown = _tasks.Where(t => _taskFilter == "all" || (_taskFilter == "done") == (t.Status == Status.Done)).ToList(); }
+                    @if (shown.Count == 0)
+                    {
+                        <div class="empty-state"><div class="empty-emoji">🎯</div><h3>Chưa có phần luyện tập nào</h3></div>
+                    }
+                    @foreach (var task in shown)
+                    {
+                        var t = task;
+                        <div class="clean-row status-@t.Status" @key="t.Id">
+                            <StatusToggle Status="@t.Status" OnClick="() => TogglePractice(t)" />
+                            <div class="row-main">
+                                <div class="row-title-line">
+                                    <p class="row-title">@t.Title</p>
+                                    <span class="badge badge-primary">@t.Skill</span>
+                                </div>
+                                <div class="row-sub">
+                                    @if (t.Duration is not null) { <span>⏱ @t.Duration phút</span> }
+                                    @if (!string.IsNullOrEmpty(t.Note)) { <span>@(t.Duration is not null ? "· " : "")@t.Note</span> }
+                                </div>
+                            </div>
+                            <div class="row-right">
+                                <label class="compact-date @Fmt.DateClass(t.DueDate, t.Status == Status.Done)" title="Ngày dự kiến làm">
+                                    <input type="date" value="@t.DueDate?.ToString("yyyy-MM-dd")" @onchange="e => SetTaskDate(t, e)" />
+                                </label>
+                                <div class="card-actions">
+                                    <button class="mini-btn" type="button" @onclick="() => OpenTask(t)">@Icons.Edit</button>
+                                    <button class="mini-btn" type="button" @onclick="() => DeleteTask(t)">@Icons.Trash</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </section>
+
+    <aside class="ws-right">
+        @{ var valid = _tests.Where(t => t.Overall is not null).OrderBy(t => t.Date).ToList(); }
+        @if (valid.Count == 0)
+        {
+            <section class="card-compact empty-state" style="padding:18px 14px">
+                <div class="empty-emoji">📈</div>
+                <h3>Biểu đồ tiến độ</h3>
+                <p style="margin-bottom:0">Nhập bài làm thử để vẽ biểu đồ điểm Overall theo thời gian.</p>
+            </section>
+        }
+        else
+        {
+            var w = Math.Max(280, valid.Count * 64 + 36);
+            const int h = 165, padL = 30, padR = 16, padT = 18, padB = 30;
+            double plotW = w - padL - padR, plotH = h - padT - padB;
+            Func<double, double> yFor = band => padT + plotH - Math.Clamp(band, 0, 9) / 9 * plotH;
+            Func<int, double> xFor = i => valid.Count == 1 ? padL + plotW / 2 : padL + i * plotW / (valid.Count - 1);
+            var pts = valid.Select((t, i) => (X: xFor(i), Y: yFor(t.Overall!.Value), T: t)).ToList();
+            var targetY = yFor(_target.Overall);
+            <section class="card-compact">
+                <div class="section-head">
+                    <h3 class="section-title">Biểu đồ tiến độ</h3>
+                    <span class="badge badge-primary">@valid.Count lần</span>
+                </div>
+                <div class="chart-wrap">
+                    <svg width="@w" height="@h" viewBox="0 0 @w @h" style="display:block;max-width:100%">
+                        @foreach (var band in new[] { 3, 5, 7, 9 })
+                        {
+                            var y = N(yFor(band));
+                            <g>
+                                <line x1="@padL" y1="@y" x2="@(w - padR)" y2="@y" stroke="var(--border)" stroke-dasharray="3 3" />
+                                <text x="@(padL - 7)" y="@N(yFor(band) + 4)" text-anchor="end" font-size="10" fill="var(--text-muted)">@(band + ".0")</text>
+                            </g>
+                        }
+                        <line x1="@padL" y1="@N(targetY)" x2="@(w - padR)" y2="@N(targetY)" stroke="var(--danger)" stroke-width="1.5" stroke-dasharray="4 4" />
+                        <text x="@(w - padR)" y="@N(targetY - 5)" text-anchor="end" font-size="10" font-weight="700" fill="var(--danger)">Mục tiêu @Fmt.Band(_target.Overall)</text>
+                        @if (pts.Count > 1)
+                        {
+                            <polyline fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                      points="@string.Join(" ", pts.Select(p => $"{N(p.X)},{N(p.Y)}"))" />
+                        }
+                        @foreach (var (p, idx) in pts.Select((p, i) => (p, i)))
+                        {
+                            <g>
+                                <circle cx="@N(p.X)" cy="@N(p.Y)" r="4.5" fill="var(--surface)" stroke="var(--primary)" stroke-width="2.4" />
+                                <text x="@N(p.X)" y="@N(p.Y - 8)" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--text)">@Fmt.Band(p.T.Overall)</text>
+                                <text x="@N(p.X)" y="@(h - 8)" text-anchor="middle" font-size="9.5" fill="var(--text-muted)">@(p.T.Date?.ToString("MM-dd") ?? $"#{idx + 1}")</text>
+                            </g>
+                        }
+                    </svg>
+                </div>
+            </section>
+        }
+
+        <div class="roadmap-card">
+            <div class="roadmap-head">
+                <h3 class="roadmap-title">⏱️ Dòng thời gian làm đề</h3>
+                <span class="badge badge-primary">@_tests.Count bài</span>
+            </div>
+            @if (_tests.Count == 0)
+            {
+                <div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:12px 6px">Chưa có bài kiểm tra thử.</div>
+            }
+            else
+            {
+                <div class="roadmap-diagram">
+                    @foreach (var t in SortedTests.Take(6))
+                    {
+                        <div class="rm-node @(t.Overall >= _target.Overall ? "state-done" : "state-doing")" style="cursor:default">
+                            <span class="rm-dot"></span>
+                            <div class="rm-node-top">
+                                <span class="rm-label">@t.Title</span>
+                                <span class="rm-count">Band @Fmt.Band(t.Overall)</span>
+                            </div>
+                            <div class="rm-dates">
+                                @(t.Date is not null ? $"📅 {Fmt.Date(t.Date)}" : "")@(t.TotalMinutes is not null ? $" · ⏱ {t.TotalMinutes}p" : "")
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </aside>
+</div>
+
+@* ---------- Modal: mục tiêu ---------- *@
+<Modal Visible="_targetDraft is not null" Title="Thiết lập mục tiêu IELTS" OnClose="() => _targetDraft = null">
+    @if (_targetDraft is { } td)
+    {
+        <form @onsubmit="SaveTarget">
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Loại kỳ thi</label>
+                    <select class="form-select" @bind="td.TestType">
+                        <option value="Academic">Academic</option>
+                        <option value="General">General Training</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ngày dự kiến thi</label>
+                    <input type="date" class="form-input" @bind="td.ExamDate" />
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group"><label class="form-label">Listening</label><input type="number" step="0.5" min="0" max="9" class="form-input" value="@td.Listening" @onchange="e => SetTargetSkill(v => td.Listening = v, e)" /></div>
+                <div class="form-group"><label class="form-label">Reading</label><input type="number" step="0.5" min="0" max="9" class="form-input" value="@td.Reading" @onchange="e => SetTargetSkill(v => td.Reading = v, e)" /></div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group"><label class="form-label">Writing</label><input type="number" step="0.5" min="0" max="9" class="form-input" value="@td.Writing" @onchange="e => SetTargetSkill(v => td.Writing = v, e)" /></div>
+                <div class="form-group"><label class="form-label">Speaking</label><input type="number" step="0.5" min="0" max="9" class="form-input" value="@td.Speaking" @onchange="e => SetTargetSkill(v => td.Speaking = v, e)" /></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mục tiêu Overall (tự tính hoặc chỉnh tay)</label>
+                <input type="number" step="0.5" min="0" max="9" class="form-input" @bind="td.Overall" />
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-soft" @onclick="() => _targetDraft = null">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu mục tiêu</button>
+            </div>
+        </form>
+    }
+</Modal>
+
+@* ---------- Modal: bài test ---------- *@
+<Modal Visible="_testDraft is not null" Title="@(_testEditing is null ? "Nhập bài kiểm tra thử IELTS" : "Sửa bài kiểm tra thử")" OnClose="CloseTest">
+    @if (_testDraft is { } t)
+    {
+        <form @onsubmit="SaveTest">
+            <div class="form-group">
+                <label class="form-label">Tên bài kiểm tra</label>
+                <input class="form-input" required @bind="t.Title" placeholder="VD: Cambridge 18 - Test 1" />
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Ngày làm bài</label>
+                    <input type="date" class="form-input" @bind="t.Date" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Loại đề</label>
+                    <select class="form-select" @bind="t.TestType">
+                        <option value="Academic">Academic</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Chọn các phần đã kiểm tra &amp; nhập điểm, thời gian (phút)</label>
+                <div class="skill-check-grid">
+                    @foreach (var sk in Skills)
+                    {
+                        var key = sk.Key;
+                        var on = _testSkillOn[key];
+                        <div class="skill-check-card @(on ? "active" : "")">
+                            <label class="skill-check-head">
+                                <input type="checkbox" checked="@on" @onchange="e => { _testSkillOn[key] = e.Value is true; Recalc(); }" />
+                                <span>@sk.Label</span>
+                            </label>
+                            @if (on)
+                            {
+                                <div class="skill-check-fields">
+                                    @if (sk.HasRaw)
+                                    {
+                                        <input type="number" min="0" max="40" placeholder="Số câu đúng /40" value="@t.Raw(key)" @oninput="e => SetRaw(key, e)" />
+                                    }
+                                    <input type="number" step="0.5" min="0" max="9" placeholder="Band (0 - 9.0)" value="@t.Score(key)" @oninput="e => SetScore(key, e)" />
+                                    <input type="number" min="1" max="300" placeholder="Thời gian (chuẩn @(sk.StdTime)p)" value="@t.Minutes(key)" @oninput="e => SetMinutes(key, e)" />
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Overall (tự tính)</label>
+                    <input type="number" step="0.5" min="0" max="9" class="form-input" @bind="t.Overall" placeholder="Tự động tính" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tổng thời gian (phút)</label>
+                    <input type="number" min="0" class="form-input" @bind="t.TotalMinutes" placeholder="Tự động cộng" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ghi chú / Lỗi sai cần rút kinh nghiệm</label>
+                <textarea class="form-textarea" @bind="t.Note"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-soft" @onclick="CloseTest">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu kết quả</button>
+            </div>
+        </form>
+    }
+</Modal>
+
+@* ---------- Modal: phần luyện tập ---------- *@
+<Modal Visible="_taskDraft is not null" Title="@(_taskEditing is null ? "Thêm phần sẽ luyện tập" : "Sửa phần luyện tập")" OnClose="CloseTask">
+    @if (_taskDraft is { } pt)
+    {
+        <form @onsubmit="SaveTask">
+            <div class="form-group">
+                <label class="form-label">Nội dung sẽ làm</label>
+                <input class="form-input" required @bind="pt.Title" placeholder="VD: Cambridge 18 Test 2 - Reading Passage 1 & 2" />
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Kỹ năng / Phần</label>
+                    <select class="form-select" @bind="pt.Skill">
+                        @foreach (var s in PracticeSkills)
+                        {
+                            <option value="@s">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" @bind="pt.Status">
+                        <option value="todo">Chưa làm</option>
+                        <option value="done">Hoàn thành</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Ngày dự kiến làm</label>
+                    <input type="date" class="form-input" @bind="pt.DueDate" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Thời gian dự kiến (phút)</label>
+                    <input type="number" min="1" class="form-input" @bind="pt.Duration" placeholder="45" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ghi chú</label>
+                <textarea class="form-textarea" @bind="pt.Note"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-soft" @onclick="CloseTask">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
+            </div>
+        </form>
+    }
+</Modal>
+
+@code {
+    private record Skill(string Key, string Label, int StdTime, bool HasRaw);
+    private static readonly Skill[] Skills =
+    [
+        new("listening", "Listening", 30, true),
+        new("reading", "Reading", 60, true),
+        new("writing", "Writing", 60, false),
+        new("speaking", "Speaking", 14, false)
+    ];
+    private static readonly (string Key, string Label)[] CompareRows =
+        [("overall", "Overall"), ("listening", "Listening"), ("reading", "Reading"), ("writing", "Writing"), ("speaking", "Speaking")];
+    private static readonly string[] PracticeSkills = ["Full Test", "Listening", "Reading", "Writing", "Speaking", "Từ vựng / Ngữ pháp"];
+
+    private bool _loading = true;
+    private string _tab = "overview";
+    private string _compareMode = "latest";
+    private int _compareA, _compareB;
+    private string _taskFilter = "all";
+
+    private IeltsTarget _target = new();
+    private List<IeltsTest> _tests = [];
+    private List<PracticeTask> _tasks = [];
+
+    private IeltsTarget? _targetDraft;
+    private IeltsTest? _testEditing, _testDraft;
+    private Dictionary<string, bool> _testSkillOn = new();
+    private PracticeTask? _taskEditing, _taskDraft;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _target = await Store.GetIeltsTargetAsync();
+        _tests = await Store.ListAsync<IeltsTest>();
+        _tasks = await Store.ListAsync<PracticeTask>();
+        _loading = false;
+    }
+
+    private List<IeltsTest> SortedTests => _tests.OrderByDescending(t => t.Date).ThenByDescending(t => t.Id).ToList();
+
+    private double TargetOf(string key) => key switch
+    {
+        "listening" => _target.Listening,
+        "reading" => _target.Reading,
+        "writing" => _target.Writing,
+        "speaking" => _target.Speaking,
+        _ => _target.Overall
+    };
+
+    private static string Pct(double band) => Math.Min(100, band / 9 * 100).ToString("0.##", CultureInfo.InvariantCulture);
+    private static string N(double v) => v.ToString("0.#", CultureInfo.InvariantCulture);
+
+    private string ExamCountdown => Fmt.DaysUntil(_target.ExamDate) switch
+    {
+        null => "Chưa đặt ngày thi",
+        > 0 and var d => $"Còn {d} ngày",
+        0 => "Hôm nay thi!",
+        var d => $"Đã qua {-d} ngày"
+    };
+
+    private Dictionary<string, double?> CurrentScores(string mode)
+    {
+        var res = CompareRows.ToDictionary(r => r.Key, _ => (double?)null);
+        var sorted = SortedTests;
+        double? Pick(List<double> vals) => vals.Count == 0 ? null : mode switch
+        {
+            "best" => vals.Max(),
+            "avg" => Fmt.RoundIelts(vals.Average()),
+            _ => vals[0]
+        };
+        foreach (var sk in Skills)
+            res[sk.Key] = Pick(sorted.Select(t => t.Score(sk.Key)).OfType<double>().ToList());
+        var overall = Pick(sorted.Select(t => t.Overall).OfType<double>().ToList());
+        if (overall is null)
+        {
+            var present = Skills.Select(s => res[s.Key]).OfType<double>().ToList();
+            if (present.Count > 0) overall = Fmt.RoundIelts(present.Average());
+        }
+        res["overall"] = overall;
+        return res;
+    }
+
+    private static MarkupString Diff(double? a, double? b, string unit = "")
+    {
+        if (a is null || b is null) return new("—");
+        var d = Math.Round(b.Value - a.Value, 1);
+        var s = d.ToString("0.#", CultureInfo.InvariantCulture);
+        return new(d > 0 ? $"<span class=\"delta-pos\">+{s}{unit}</span>"
+                 : d < 0 ? $"<span class=\"delta-neg\">{s}{unit}</span>"
+                 : $"<span class=\"delta-zero\">0{unit}</span>");
+    }
+
+    private static MarkupString Diff(int? a, int? b, string unit) => Diff((double?)a, (double?)b, unit);
+
+    private static double? ParseD(ChangeEventArgs e) =>
+        double.TryParse(e.Value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var v) ? v : null;
+    private static int? ParseI(ChangeEventArgs e) =>
+        int.TryParse(e.Value?.ToString(), out var v) ? v : null;
+
+    // ----- Mục tiêu -----
+    private async Task ChangeExamDate(ChangeEventArgs e)
+    {
+        _target.ExamDate = DateOnly.TryParse(e.Value?.ToString(), CultureInfo.InvariantCulture, out var d) ? d : null;
+        await Store.SaveIeltsTargetAsync(_target);
+    }
+
+    private void OpenTarget() => _targetDraft = Cloner.Clone(_target);
+
+    private void SetTargetSkill(Action<double> set, ChangeEventArgs e)
+    {
+        set(ParseD(e) ?? 0);
+        var t = _targetDraft!;
+        t.Overall = Fmt.RoundIelts((t.Listening + t.Reading + t.Writing + t.Speaking) / 4);
+    }
+
+    private async Task SaveTarget()
+    {
+        _target = _targetDraft!;
+        await Store.SaveIeltsTargetAsync(_target);
+        _targetDraft = null;
+        Ui.Toast("Đã lưu mục tiêu IELTS");
+    }
+
+    // ----- Bài test -----
+    private void OpenTest(IeltsTest? t)
+    {
+        _testEditing = t;
+        _testDraft = t is null ? new IeltsTest { Date = Fmt.Today, TestType = _target.TestType } : Cloner.Clone(t);
+        _testSkillOn = Skills.ToDictionary(s => s.Key, s => t is null || t.Score(s.Key) is not null);
+    }
+
+    private void CloseTest() { _testDraft = null; _testEditing = null; }
+
+    private void SetRaw(string key, ChangeEventArgs e)
+    {
+        var t = _testDraft!;
+        var raw = ParseI(e);
+        if (key == "listening") t.ListeningRaw = raw; else t.ReadingRaw = raw;
+        if (Fmt.RawToBand(raw, key, t.TestType) is { } band)
+        {
+            if (key == "listening") t.ListeningScore = band; else t.ReadingScore = band;
+        }
+        Recalc();
+    }
+
+    private void SetScore(string key, ChangeEventArgs e)
+    {
+        var t = _testDraft!; var v = ParseD(e);
+        switch (key)
+        {
+            case "listening": t.ListeningScore = v; break;
+            case "reading": t.ReadingScore = v; break;
+            case "writing": t.WritingScore = v; break;
+            default: t.SpeakingScore = v; break;
+        }
+        Recalc();
+    }
+
+    private void SetMinutes(string key, ChangeEventArgs e)
+    {
+        var t = _testDraft!; var v = ParseI(e);
+        switch (key)
+        {
+            case "listening": t.ListeningMinutes = v; break;
+            case "reading": t.ReadingMinutes = v; break;
+            case "writing": t.WritingMinutes = v; break;
+            default: t.SpeakingMinutes = v; break;
+        }
+        Recalc();
+    }
+
+    private void Recalc()
+    {
+        var t = _testDraft!;
+        var on = Skills.Where(s => _testSkillOn[s.Key]).ToList();
+        var scores = on.Select(s => t.Score(s.Key)).OfType<double>().ToList();
+        t.Overall = scores.Count > 0 ? Fmt.RoundIelts(scores.Average()) : null;
+        var mins = on.Select(s => t.Minutes(s.Key)).OfType<int>().Where(m => m > 0).ToList();
+        if (mins.Count > 0) t.TotalMinutes = mins.Sum();
+    }
+
+    private async Task SaveTest()
+    {
+        var t = _testDraft!;
+        // Bỏ điểm của các phần không chọn.
+        if (!_testSkillOn["listening"]) { t.ListeningScore = null; t.ListeningRaw = null; t.ListeningMinutes = null; }
+        if (!_testSkillOn["reading"]) { t.ReadingScore = null; t.ReadingRaw = null; t.ReadingMinutes = null; }
+        if (!_testSkillOn["writing"]) { t.WritingScore = null; t.WritingMinutes = null; }
+        if (!_testSkillOn["speaking"]) { t.SpeakingScore = null; t.SpeakingMinutes = null; }
+        t.Title = t.Title.Trim();
+        if (_testEditing is null)
+        {
+            _tests.Add(await Store.AddAsync(t));
+            Ui.Toast("Đã lưu kết quả bài test!");
+        }
+        else
+        {
+            Cloner.CopyInto(t, _testEditing);
+            await Store.UpdateAsync(_testEditing);
+            Ui.Toast("Đã cập nhật bài test");
+        }
+        CloseTest();
+    }
+
+    private async Task DeleteTest(IeltsTest t)
+    {
+        if (!await Ui.ConfirmAsync("Xóa bài kiểm tra thử này?")) return;
+        await Store.DeleteAsync(t);
+        _tests.Remove(t);
+        Ui.Toast("Đã xóa bài kiểm tra");
+    }
+
+    // ----- Phần luyện tập -----
+    private async Task TogglePractice(PracticeTask t)
+    {
+        t.Status = t.Status == Status.Done ? Status.Todo : Status.Done;
+        await Store.UpdateAsync(t);
+        Ui.Toast(t.Status == Status.Done ? "Đã hoàn thành!" : "Chuyển về chưa làm");
+    }
+
+    private async Task SetTaskDate(PracticeTask t, ChangeEventArgs e)
+    {
+        t.DueDate = DateOnly.TryParse(e.Value?.ToString(), CultureInfo.InvariantCulture, out var d) ? d : null;
+        await Store.UpdateAsync(t);
+    }
+
+    private void OpenTask(PracticeTask? t)
+    {
+        _taskEditing = t;
+        _taskDraft = t is null ? new PracticeTask { Duration = 45 } : Cloner.Clone(t);
+    }
+
+    private void CloseTask() { _taskDraft = null; _taskEditing = null; }
+
+    private async Task SaveTask()
+    {
+        var t = _taskDraft!;
+        t.Title = t.Title.Trim();
+        if (_taskEditing is null)
+        {
+            _tasks.Add(await Store.AddAsync(t));
+            Ui.Toast("Đã thêm phần luyện tập mới");
+        }
+        else
+        {
+            Cloner.CopyInto(t, _taskEditing);
+            await Store.UpdateAsync(_taskEditing);
+            Ui.Toast("Đã cập nhật phần luyện tập");
+        }
+        CloseTask();
+    }
+
+    private async Task DeleteTask(PracticeTask t)
+    {
+        if (!await Ui.ConfirmAsync("Xóa phần luyện tập này?")) return;
+        await Store.DeleteAsync(t);
+        _tasks.Remove(t);
+        Ui.Toast("Đã xóa phần luyện tập");
+    }
+}

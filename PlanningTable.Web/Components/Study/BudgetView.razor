@@ -1,0 +1,160 @@
+@inject PlannerStore Store
+@inject UiService Ui
+
+<div class="card-compact">
+    <div class="section-head" style="margin-bottom:6px">
+        <h3 class="section-title">Dự trù chi phí</h3>
+        <button class="btn btn-primary btn-sm" type="button" @onclick="() => OpenEdit(null)">+ Khoản chi</button>
+    </div>
+    <div class="budget-summary-grid">
+        <div class="budget-metric">
+            <span>Tổng ước tính (EUR)</span>
+            <strong style="color:var(--primary)">€ @Fmt.Money(TotalEur)</strong>
+        </div>
+        <div class="budget-metric">
+            <span>Tổng ước tính (VNĐ)</span>
+            <strong>@Fmt.Money(TotalVnd) ₫</strong>
+        </div>
+        <div class="budget-metric">
+            <span>Đã chi / Chuẩn bị</span>
+            <strong style="color:var(--success)">@Fmt.Money(PaidVnd) ₫</strong>
+        </div>
+        <div class="budget-metric">
+            <span>Tỷ giá (VNĐ/EUR)</span>
+            <input type="number" class="form-input" value="@Rate" style="padding:4px 8px;margin-top:2px;font-size:0.84rem;font-weight:700"
+                   @onchange="ChangeRate" />
+        </div>
+    </div>
+</div>
+
+<div class="group-box">
+    <div class="clean-list">
+        @foreach (var item in Items)
+        {
+            var b = item;
+            var vnd = Vnd(b);
+            <div class="clean-row @(b.Paid ? "status-done" : "")" @key="b.Id">
+                <StatusToggle Status="@(b.Paid ? Status.Done : Status.Todo)" OnClick="() => TogglePaid(b)" />
+                <div class="row-main">
+                    <p class="row-title">@b.Item</p>
+                    @if (!string.IsNullOrEmpty(b.Note))
+                    {
+                        <div class="row-sub">@b.Note</div>
+                    }
+                </div>
+                <div class="row-right">
+                    <div style="text-align:right;font-size:0.8rem">
+                        <div style="font-weight:700;color:var(--primary)">@(b.Eur is null ? "—" : "€ " + Fmt.Money(b.Eur))</div>
+                        <div style="font-size:0.72rem;color:var(--text-muted)">@(vnd is null ? "Chưa điền" : Fmt.Money(vnd) + " ₫")</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="mini-btn" type="button" @onclick="() => OpenEdit(b)">@Icons.Edit</button>
+                        <button class="mini-btn" type="button" @onclick="() => Delete(b)">@Icons.Trash</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<Modal Visible="_draft is not null" Title="@(_editing is null ? "Thêm khoản chi phí" : "Sửa khoản chi phí")" OnClose="Close">
+    @if (_draft is not null)
+    {
+        <form @onsubmit="Save">
+            <div class="form-group">
+                <label class="form-label">Hạng mục chi phí</label>
+                <input class="form-input" required @bind="_draft.Item" placeholder="VD: Phí thi IELTS" />
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Số tiền (EUR)</label>
+                    <input type="number" step="any" class="form-input" value="@_draft.Eur" @oninput="EurInput" placeholder="0" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số tiền ước tính (VNĐ)</label>
+                    <input type="number" step="any" class="form-input" @bind="_draft.Vnd" placeholder="Tự quy đổi từ EUR" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ghi chú / Mẹo tiết kiệm</label>
+                <textarea class="form-textarea" @bind="_draft.Note"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-soft" @onclick="Close">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
+            </div>
+        </form>
+    }
+</Modal>
+
+@code {
+    [Parameter, EditorRequired] public List<BudgetItem> Items { get; set; } = [];
+    [Parameter, EditorRequired] public AppSettings Settings { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private BudgetItem? _editing;
+    private BudgetItem? _draft;
+
+    private decimal Rate => Settings.EurRate > 0 ? Settings.EurRate : 27500;
+    private decimal? Vnd(BudgetItem b) => b.Vnd ?? (b.Eur is { } e ? Math.Round(e * Rate) : null);
+    private decimal TotalEur => Items.Sum(b => b.Eur ?? 0);
+    private decimal TotalVnd => Items.Sum(b => Vnd(b) ?? 0);
+    private decimal PaidVnd => Items.Where(b => b.Paid).Sum(b => Vnd(b) ?? 0);
+
+    private async Task ChangeRate(ChangeEventArgs e)
+    {
+        if (!decimal.TryParse(e.Value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var r) || r <= 0) return;
+        var saved = await Store.UpdateSettingsAsync(s => s.EurRate = r);
+        Settings.EurRate = saved.EurRate;
+        await OnChanged.InvokeAsync();
+    }
+
+    private void EurInput(ChangeEventArgs e)
+    {
+        if (_draft is null) return;
+        _draft.Eur = decimal.TryParse(e.Value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var v) ? v : null;
+        if (_draft.Eur is { } eur) _draft.Vnd = Math.Round(eur * Rate);
+    }
+
+    private async Task TogglePaid(BudgetItem b)
+    {
+        b.Paid = !b.Paid;
+        await Store.UpdateAsync(b);
+        await OnChanged.InvokeAsync();
+    }
+
+    private void OpenEdit(BudgetItem? b)
+    {
+        _editing = b;
+        _draft = b is null ? new BudgetItem() : Cloner.Clone(b);
+    }
+
+    private void Close() { _draft = null; _editing = null; }
+
+    private async Task Save()
+    {
+        if (_draft is null) return;
+        if (_editing is null)
+        {
+            Items.Add(await Store.AddAsync(_draft));
+            Ui.Toast("Đã thêm khoản chi mới");
+        }
+        else
+        {
+            Cloner.CopyInto(_draft, _editing);
+            await Store.UpdateAsync(_editing);
+            Ui.Toast("Đã cập nhật chi phí");
+        }
+        Close();
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Delete(BudgetItem b)
+    {
+        if (!await Ui.ConfirmAsync("Xóa khoản chi phí này?")) return;
+        await Store.DeleteAsync(b);
+        Items.Remove(b);
+        Ui.Toast("Đã xóa khoản chi");
+        await OnChanged.InvokeAsync();
+    }
+}

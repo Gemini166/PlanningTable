@@ -1,0 +1,161 @@
+@inject PlannerStore Store
+@inject UiService Ui
+
+<div class="grid-card">
+    <div class="grid-toolbar">
+        <button class="btn btn-primary btn-sm" type="button" @onclick="AddRow">+ Thêm trường</button>
+        <div class="chip-scroll">
+            <button class="chip @(_status is null ? "active" : "")" type="button" @onclick="() => _status = null">Tất cả (@Items.Count)</button>
+            @foreach (var s in Statuses)
+            {
+                var c = Items.Count(u => u.Status == s);
+                if (c == 0) continue;
+                <button class="chip @(_status == s ? "active" : "")" type="button" @onclick="() => _status = s">@s (@c)</button>
+            }
+        </div>
+    </div>
+
+    <div class="grid-scroll">
+        <table class="data-grid uni-grid">
+            <thead>
+                <tr>
+                    <th class="hd-blue sticky-col uni-status-col">Status</th>
+                    <th class="hd-blue sticky-col uni-name-col">University &amp; Program</th>
+                    <th class="hd-blue" style="min-width:150px">Location</th>
+                    <th class="hd-blue" style="min-width:190px">Major</th>
+                    <th class="hd-blue" style="min-width:190px">Tuition Fee</th>
+                    <th class="hd-blue" style="min-width:150px">Application Method</th>
+                    <th class="hd-blue" style="min-width:200px">Application Deadline</th>
+                    <th class="hd-blue col-bool">VPD Required?</th>
+                    <th class="hd-blue col-bool">TestAS Required</th>
+                    <th class="hd-blue col-bool">German Language Proficiency</th>
+                    <th class="hd-blue" style="min-width:250px">Notes</th>
+                    <th class="hd-blue" style="min-width:230px">English Language Requirement</th>
+                    <th class="hd-blue" style="min-width:250px">Required Documents</th>
+                    <th class="hd-blue" style="min-width:90px">Link</th>
+                    <th class="hd-plain" style="min-width:270px">Course Objectives</th>
+                    <th class="hd-plain" style="min-width:270px">Curriculum Highlights</th>
+                    <th class="hd-plain" style="min-width:240px">Potential Career Paths</th>
+                    <th class="hd-plain" style="min-width:270px">Ghi chú cá nhân</th>
+                    <th class="hd-plain col-actions"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var uni in Items.Where(u => _status is null || u.Status == _status))
+                {
+                    var u = uni;
+                    <tr @key="u.Id">
+                        <td class="sticky-col uni-status-col">
+                            <select class="pill-select @StatusClass(u.Status)" value="@u.Status" @onchange="e => Set(u, x => x.Status = Str(e))">
+                                @foreach (var s in Statuses)
+                                {
+                                    <option value="@s">@s</option>
+                                }
+                            </select>
+                        </td>
+                        <td class="sticky-col uni-name-col">
+                            <textarea class="cell-input strong" rows="1" placeholder="Tên trường" value="@u.Name"
+                                      @onchange="e => Set(u, x => x.Name = Str(e))"></textarea>
+                            <textarea class="cell-input" rows="2" placeholder="Chương trình (VD: International Business (B.A.))" value="@u.Program"
+                                      @onchange="e => Set(u, x => x.Program = Str(e))"></textarea>
+                        </td>
+                        <td>@Text(u, x => x.Location, (x, v) => x.Location = v, "Thành phố, bang")</td>
+                        <td>@Text(u, x => x.Major, (x, v) => x.Major = v)</td>
+                        <td>@Text(u, x => x.TuitionFee, (x, v) => x.TuitionFee = v, "VD: No tuition fee; ~€300/semester")</td>
+                        <td>@Text(u, x => x.ApplicationMethod, (x, v) => x.ApplicationMethod = v, "uni-assist / trực tiếp")</td>
+                        <td>
+                            @Text(u, x => x.ApplicationPeriod, (x, v) => x.ApplicationPeriod = v, "VD: April 15 – July 15, 2025", 2)
+                            <label class="compact-date @Fmt.DateClass(u.Deadline, u.Status is "Got the Zu" or "Đã nộp" or "Nope")" title="Hạn chót (hiện trên Lịch)">
+                                <input type="date" value="@u.Deadline?.ToString("yyyy-MM-dd")" @onchange="e => Set(u, x => x.Deadline = ParseDate(e))" />
+                            </label>
+                        </td>
+                        <td class="col-bool">@Bool(u, u.VpdRequired, (x, v) => x.VpdRequired = v)</td>
+                        <td class="col-bool">@Bool(u, u.TestAsRequired, (x, v) => x.TestAsRequired = v)</td>
+                        <td class="col-bool">@Bool(u, u.GermanRequired, (x, v) => x.GermanRequired = v)</td>
+                        <td>@Text(u, x => x.AdmissionNotes, (x, v) => x.AdmissionNotes = v)</td>
+                        <td>@Text(u, x => x.EnglishRequirement, (x, v) => x.EnglishRequirement = v, "VD: B2 · IELTS ≥ 6.0, TOEFL iBT ≥ 72")</td>
+                        <td>@Text(u, x => x.RequiredDocuments, (x, v) => x.RequiredDocuments = v, "- High school diploma\n- APS certificate")</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(u.Link))
+                            {
+                                <a class="cell-link" href="@SafeLink(u.Link)" target="_blank" rel="noopener">Mở ↗</a>
+                            }
+                            <input class="cell-input small" placeholder="https://…" value="@u.Link" @onchange="e => Set(u, x => x.Link = Str(e))" />
+                        </td>
+                        <td>@Text(u, x => x.CourseObjectives, (x, v) => x.CourseObjectives = v)</td>
+                        <td>@Text(u, x => x.CurriculumHighlights, (x, v) => x.CurriculumHighlights = v)</td>
+                        <td>@Text(u, x => x.CareerPaths, (x, v) => x.CareerPaths = v)</td>
+                        <td>@Text(u, x => x.Notes, (x, v) => x.Notes = v, "Ưu / nhược điểm, cảm nhận…")</td>
+                        <td class="col-actions">
+                            <button class="mini-btn" type="button" title="Xóa" @onclick="() => Delete(u)">@Icons.Trash</button>
+                        </td>
+                    </tr>
+                }
+                @if (Items.Count == 0)
+                {
+                    <tr><td colspan="19" class="grid-empty">Chưa có trường nào. Bấm “+ Thêm trường”.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="grid-footer">💡 Sửa trực tiếp trong ô — dữ liệu tự lưu vào database khi bạn rời khỏi ô. Kéo ngang để xem thêm cột.</div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public List<University> Items { get; set; } = [];
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly string[] Statuses = ["Đang tìm hiểu", "Đang chuẩn bị", "Đã nộp", "Waiting", "Got the Zu", "Nope"];
+    private string? _status;
+
+    private static string StatusClass(string s) => s switch
+    {
+        "Got the Zu" => "pill-done",
+        "Waiting" => "pill-waiting",
+        "Đã nộp" => "pill-submitted",
+        "Nope" => "pill-nope",
+        _ => "pill-doing"
+    };
+
+    private static string Str(ChangeEventArgs e) => e.Value?.ToString()?.Trim() ?? "";
+    private static DateOnly? ParseDate(ChangeEventArgs e) =>
+        DateOnly.TryParse(e.Value?.ToString(), CultureInfo.InvariantCulture, out var d) ? d : null;
+
+    private static string SafeLink(string link) =>
+        link.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || link.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            ? link : "https://" + link;
+
+    private RenderFragment Text(University u, Func<University, string> get, Action<University, string> set, string? placeholder = null, int rows = 4) =>
+        @<textarea class="cell-input" rows="@rows" placeholder="@placeholder" value="@get(u)"
+                   @onchange="e => Set(u, x => set(x, Str(e)))"></textarea>;
+
+    private RenderFragment Bool(University u, bool value, Action<University, bool> set) =>
+        @<button type="button" class="bool-cell @(value ? "yes" : "no")" @onclick="() => Set(u, x => set(x, !value))">
+            @(value ? "✅ Yes" : "❌ No")
+        </button>;
+
+    private async Task Set(University u, Action<University> change)
+    {
+        change(u);
+        await Store.UpdateAsync(u);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task AddRow()
+    {
+        var u = await Store.AddAsync(new University { Name = "", Status = _status ?? "Đang tìm hiểu" });
+        Items.Add(u);
+        Ui.Toast("Đã thêm dòng mới ở cuối bảng");
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Delete(University u)
+    {
+        var name = string.IsNullOrWhiteSpace(u.Name) ? "dòng này" : $"\"{u.Name}\"";
+        if (!await Ui.ConfirmAsync($"Xóa {name} khỏi danh sách trường?")) return;
+        await Store.DeleteAsync(u);
+        Items.Remove(u);
+        Ui.Toast("Đã xóa trường");
+        await OnChanged.InvokeAsync();
+    }
+}

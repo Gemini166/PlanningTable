@@ -1,0 +1,356 @@
+@inject PlannerStore Store
+@inject UiService Ui
+@inject IJSRuntime JS
+
+<div class="grid-card">
+    <div class="grid-toolbar">
+        <button class="btn btn-primary btn-sm" type="button" @onclick="AddRow">+ Thêm bản ghi</button>
+        <div class="chip-scroll">
+            <button class="chip @(_area is null ? "active" : "")" type="button" @onclick="() => _area = null">Tất cả (@Items.Count)</button>
+            @foreach (var a in AllAreas)
+            {
+                <button class="chip @(_area == a ? "active" : "")" type="button" @onclick="() => _area = a">@a</button>
+            }
+        </div>
+        <label class="grid-toggle">
+            <input type="checkbox" @bind="_hideDone" /> Ẩn mục đã xong
+        </label>
+    </div>
+
+    <div class="grid-scroll">
+        <table class="data-grid docs-grid">
+            <thead>
+                <tr>
+                    <th class="col-num">#</th>
+                    <th class="col-name sticky-col">Giấy tờ</th>
+                    <th style="min-width:200px">Area</th>
+                    <th style="min-width:150px">Attachment</th>
+                    <th style="min-width:150px">Progress</th>
+                    <th style="min-width:150px">Chứng thực / chuẩn bị</th>
+                    <th class="col-check">Checkbox</th>
+                    <th style="min-width:260px">Note</th>
+                    <th style="min-width:180px">Dịch thuật / CC</th>
+                    <th style="min-width:140px">Hạn</th>
+                    <th class="col-actions"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ var i = 0; }
+                @foreach (var d in Filtered)
+                {
+                    i++;
+                    var doc = d;
+                    <tr class="@(doc.Checked ? "row-done" : "")" @key="doc.Id">
+                        <td class="col-num">@i</td>
+                        <td class="col-name sticky-col">
+                            <textarea class="cell-input strong" rows="1" value="@doc.Name"
+                                      @onchange="e => Set(doc, x => x.Name = Str(e))"></textarea>
+                        </td>
+                        <td class="cell-click" title="Bấm để sửa Area" @onclick="() => OpenEdit(doc)">
+                            <div class="tag-list">
+                                @foreach (var a in doc.AreaList())
+                                {
+                                    <span class="tag @Fmt.TagClass(a)">@a</span>
+                                }
+                                @if (!doc.AreaList().Any())
+                                {
+                                    <span class="cell-placeholder">+ Area</span>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="attach-list">
+                                @foreach (var att in doc.Attachments)
+                                {
+                                    var a = att;
+                                    <button type="button" class="attach-item" title="@a.FileName (@Fmt.FileSize(a.Size))" @onclick="() => OpenFile(a)">
+                                        @if (a.IsImage && _urls.TryGetValue(a.Id, out var src))
+                                        {
+                                            <img src="@src" alt="@a.FileName" loading="lazy" />
+                                        }
+                                        else
+                                        {
+                                            <span class="attach-file">@Path.GetExtension(a.FileName).TrimStart('.').ToUpperInvariant()</span>
+                                        }
+                                    </button>
+                                }
+                                <label class="attach-add" title="Đính kèm file (ảnh, PDF…)">
+                                    @Icons.Clip
+                                    <InputFile multiple OnChange="e => Upload(doc, e)" style="display:none" />
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress-cell">
+                                <input type="range" min="0" max="100" step="10" class="progress-range"
+                                       style="--val:@(doc.Progress)%" value="@doc.Progress"
+                                       @onchange="e => SetProgress(doc, e)" />
+                                <span class="progress-num">@doc.Progress%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="pill-select pill-@doc.Status" value="@doc.Status" @onchange="e => SetStatus(doc, Str(e))">
+                                <option value="todo">Chưa làm</option>
+                                <option value="doing">Đang làm</option>
+                                <option value="done">Done</option>
+                                <option value="noneed">No need</option>
+                            </select>
+                        </td>
+                        <td class="col-check">
+                            <input type="checkbox" class="grid-check" checked="@doc.Checked" @onchange="e => SetChecked(doc, e.Value is true)" />
+                        </td>
+                        <td>
+                            <textarea class="cell-input" rows="2" value="@doc.Note" placeholder="Ghi chú…"
+                                      @onchange="e => Set(doc, x => x.Note = Str(e))"></textarea>
+                        </td>
+                        <td>
+                            <textarea class="cell-input" rows="2" value="@doc.Translation" placeholder="VD: Dịch + CC (x2)"
+                                      @onchange="e => Set(doc, x => x.Translation = Str(e))"></textarea>
+                        </td>
+                        <td>
+                            <label class="compact-date @Fmt.DateClass(doc.DueDate, doc.Checked)">
+                                <input type="date" value="@doc.DueDate?.ToString("yyyy-MM-dd")" @onchange="e => Set(doc, x => x.DueDate = ParseDate(e))" />
+                            </label>
+                        </td>
+                        <td class="col-actions">
+                            <div class="card-actions">
+                                <button class="mini-btn" type="button" title="Sửa" @onclick="() => OpenEdit(doc)">@Icons.Edit</button>
+                                <button class="mini-btn" type="button" title="Xóa" @onclick="() => Delete(doc)">@Icons.Trash</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (i == 0)
+                {
+                    <tr><td colspan="11" class="grid-empty">Không có giấy tờ nào khớp bộ lọc.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="grid-footer">
+        Đã xong <strong>@Items.Count(d => d.Checked)</strong>/@Items.Count giấy tờ ·
+        Tiến độ trung bình <strong>@(Items.Count == 0 ? 0 : (int)Items.Average(d => d.Progress))%</strong>
+    </div>
+</div>
+
+<Modal Visible="_draft is not null" Title="@(_editing is null ? "Thêm giấy tờ" : "Sửa giấy tờ")" OnClose="Close">
+    @if (_draft is not null)
+    {
+        <form @onsubmit="SaveDraft">
+            <div class="form-group">
+                <label class="form-label">Tên giấy tờ</label>
+                <input class="form-input" required @bind="_draft.Name" placeholder="VD: Academic transcript" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Area (dùng cho)</label>
+                <div class="tag-picker">
+                    @foreach (var a in AllAreas.Union(_draftAreas))
+                    {
+                        var area = a;
+                        <button type="button" class="tag @Fmt.TagClass(area) @(_draftAreas.Contains(area) ? "" : "tag-off")"
+                                @onclick="() => ToggleArea(area)">@area</button>
+                    }
+                </div>
+                <div style="display:flex;gap:6px;margin-top:8px">
+                    <input class="form-input" @bind="_newArea" placeholder="Thêm area mới, VD: Thẩm định APS" />
+                    <button type="button" class="btn btn-soft" @onclick="AddArea">Thêm</button>
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Chứng thực / chuẩn bị</label>
+                    <select class="form-select" @bind="_draft.Status">
+                        <option value="todo">Chưa làm</option>
+                        <option value="doing">Đang làm</option>
+                        <option value="done">Done</option>
+                        <option value="noneed">No need</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hạn chuẩn bị</label>
+                    <input type="date" class="form-input" @bind="_draft.DueDate" />
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Progress: @_draft.Progress%</label>
+                    <input type="range" min="0" max="100" step="5" style="width:100%" @bind="_draft.Progress" @bind:event="oninput" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Dịch thuật / Công chứng</label>
+                    <input class="form-input" @bind="_draft.Translation" placeholder="VD: Dịch + CC (x2)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ghi chú</label>
+                <textarea class="form-textarea" @bind="_draft.Note"></textarea>
+            </div>
+            @if (_editing is { Attachments.Count: > 0 })
+            {
+                <div class="form-group">
+                    <label class="form-label">File đính kèm</label>
+                    @foreach (var att in _editing.Attachments.ToList())
+                    {
+                        var a = att;
+                        <div class="attach-row">
+                            <a href="javascript:void(0)" @onclick="() => OpenFile(a)">📎 @a.FileName</a>
+                            <span class="muted">@Fmt.FileSize(a.Size)</span>
+                            <button type="button" class="mini-btn" title="Xóa file" @onclick="() => DeleteAttachment(a)">@Icons.Trash</button>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="form-actions">
+                <button type="button" class="btn btn-soft" @onclick="Close">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
+            </div>
+        </form>
+    }
+</Modal>
+
+@code {
+    [Parameter, EditorRequired] public List<DocumentItem> Items { get; set; } = [];
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string? _area;
+    private bool _hideDone;
+    private DocumentItem? _editing;
+    private DocumentItem? _draft;
+    private List<string> _draftAreas = [];
+    private string _newArea = "";
+
+    // Ảnh xem trước của file đính kèm (data URL đọc từ trình duyệt).
+    private readonly Dictionary<int, string> _urls = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        foreach (var att in Items.SelectMany(d => d.Attachments).Where(a => a.IsImage && !_urls.ContainsKey(a.Id)).ToList())
+            if (await Store.GetAttachmentUrlAsync(att.Id) is { } url) _urls[att.Id] = url;
+    }
+
+    private async Task OpenFile(DocumentAttachment att)
+    {
+        var url = _urls.TryGetValue(att.Id, out var u) ? u : await Store.GetAttachmentUrlAsync(att.Id);
+        if (url is null) { Ui.Toast("Không tìm thấy file trong trình duyệt"); return; }
+        await JS.InvokeVoidAsync("plannerDb.openFile", url);
+    }
+
+    private IEnumerable<string> AllAreas => Items.SelectMany(d => d.AreaList()).Distinct().OrderBy(a => a);
+
+    private IEnumerable<DocumentItem> Filtered => Items
+        .Where(d => _area is null || d.AreaList().Contains(_area))
+        .Where(d => !_hideDone || !d.Checked);
+
+    private static string Str(ChangeEventArgs e) => e.Value?.ToString()?.Trim() ?? "";
+    private static DateOnly? ParseDate(ChangeEventArgs e) =>
+        DateOnly.TryParse(e.Value?.ToString(), CultureInfo.InvariantCulture, out var d) ? d : null;
+
+    private async Task Set(DocumentItem doc, Action<DocumentItem> change)
+    {
+        change(doc);
+        await Store.UpdateDocumentAsync(doc);
+        await OnChanged.InvokeAsync();
+    }
+
+    private Task SetProgress(DocumentItem doc, ChangeEventArgs e) => Set(doc, x =>
+    {
+        x.Progress = int.TryParse(e.Value?.ToString(), out var p) ? Math.Clamp(p, 0, 100) : 0;
+        if (x.Progress == 100) { x.Checked = true; if (x.Status != Status.NoNeed) x.Status = Status.Done; }
+        else if (x.Progress > 0 && x.Status == Status.Todo) x.Status = Status.Doing;
+    });
+
+    private Task SetStatus(DocumentItem doc, string status) => Set(doc, x =>
+    {
+        x.Status = status;
+        if (status is Status.Done or Status.NoNeed) { x.Checked = true; x.Progress = 100; }
+        else x.Checked = false;
+    });
+
+    private Task SetChecked(DocumentItem doc, bool value) => Set(doc, x =>
+    {
+        x.Checked = value;
+        if (value) { x.Progress = 100; if (x.Status != Status.NoNeed) x.Status = Status.Done; }
+        else if (x.Status == Status.Done) { x.Status = Status.Doing; if (x.Progress == 100) x.Progress = 90; }
+    });
+
+    private async Task Upload(DocumentItem doc, InputFileChangeEventArgs e)
+    {
+        try
+        {
+            foreach (var f in e.GetMultipleFiles(10))
+            {
+                // File được lưu ngay trong trình duyệt nên giới hạn 10 MB/file.
+                await using var stream = f.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+                var att = await Store.AddAttachmentAsync(doc, f.Name, f.ContentType, stream);
+                if (att.IsImage && await Store.GetAttachmentUrlAsync(att.Id) is { } url) _urls[att.Id] = url;
+            }
+            Ui.Toast("Đã đính kèm file");
+        }
+        catch (Exception ex)
+        {
+            Ui.Toast("Không tải được file: " + ex.Message);
+        }
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task DeleteAttachment(DocumentAttachment att)
+    {
+        if (_editing is null || !await Ui.ConfirmAsync($"Xóa file \"{att.FileName}\"?")) return;
+        await Store.DeleteAttachmentAsync(_editing, att);
+        _urls.Remove(att.Id);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task AddRow()
+    {
+        var doc = await Store.AddAsync(new DocumentItem { Name = "Giấy tờ mới", Areas = _area ?? "" });
+        Items.Add(doc);
+        _hideDone = false;
+        OpenEdit(doc);
+        await OnChanged.InvokeAsync();
+    }
+
+    private void OpenEdit(DocumentItem doc)
+    {
+        _editing = doc;
+        _draft = Cloner.Clone(doc);
+        _draftAreas = doc.AreaList().ToList();
+        _newArea = "";
+    }
+
+    private void Close() { _draft = null; _editing = null; }
+
+    private void ToggleArea(string a)
+    {
+        if (!_draftAreas.Remove(a)) _draftAreas.Add(a);
+    }
+
+    private void AddArea()
+    {
+        var a = _newArea.Replace(",", " ").Trim();
+        if (a.Length > 0 && !_draftAreas.Contains(a)) _draftAreas.Add(a);
+        _newArea = "";
+    }
+
+    private async Task SaveDraft()
+    {
+        if (_draft is null || _editing is null) return;
+        AddArea();
+        _draft.Areas = string.Join(",", _draftAreas);
+        _draft.Checked = _draft.Status is Status.Done or Status.NoNeed || _draft.Progress == 100;
+        Cloner.CopyInto(_draft, _editing);
+        await Store.UpdateDocumentAsync(_editing);
+        Close();
+        Ui.Toast("Đã lưu giấy tờ");
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Delete(DocumentItem doc)
+    {
+        if (!await Ui.ConfirmAsync($"Xóa giấy tờ \"{doc.Name}\" (kèm file đính kèm)?")) return;
+        await Store.DeleteDocumentAsync(doc);
+        Items.Remove(doc);
+        Ui.Toast("Đã xóa giấy tờ");
+        await OnChanged.InvokeAsync();
+    }
+}

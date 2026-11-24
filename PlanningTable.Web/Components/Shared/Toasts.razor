@@ -1,0 +1,13 @@
+@implements IDisposable
+@inject UiService Ui
+
+@if (Ui.ToastMessage is { } msg)
+{
+    <div class="toast" role="status" aria-live="polite">@msg</div>
+}
+
+@code {
+    protected override void OnInitialized() => Ui.Changed += Refresh;
+    private void Refresh() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Ui.Changed -= Refresh;
+}

@@ -1,0 +1,756 @@
+{
+ "version": 1,
+ "settings": {
+  "theme": "light",
+  "eurRate": 27500,
+  "targetIntakeDate": "",
+  "targetIntakeName": "Winter / Summer Intake"
+ },
+ "studyAbroad": {
+  "timeline": [
+   {
+    "id": "tl-1",
+    "phase": "T-12 đến T-10 tháng",
+    "task": "Xác định intake (Winter/Summer), shortlist 10–15 chương trình",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-2",
+    "phase": "T-12 đến T-10 tháng",
+    "task": "Audit profile: GPA, ngành nền, gaps môn Toán/Stats/CS",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-3",
+    "phase": "T-12 đến T-10 tháng",
+    "task": "Lập folder hệ thống: Docs/APS/Uni-assist/Visa + naming convention",
+    "priority": "P2",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-4",
+    "phase": "T-11 đến T-9 tháng",
+    "task": "Plan & học/ôn IELTS/TOEFL (target score theo trường top)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-5",
+    "phase": "T-11 đến T-9 tháng",
+    "task": "Đăng ký lịch thi IELTS/TOEFL lần 1",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-6",
+    "phase": "T-11 đến T-9 tháng",
+    "task": "Xin bảng điểm/bằng/giấy xác nhận từ trường ĐH",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-7",
+    "phase": "T-11 đến T-9 tháng",
+    "task": "Thu thập Syllabus/Module handbook các môn quan trọng",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-8",
+    "phase": "T-10 đến T-8 tháng",
+    "task": "Chuẩn bị hồ sơ APS (theo checklist APS)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-9",
+    "phase": "T-10 đến T-8 tháng",
+    "task": "Dịch thuật + công chứng batch 1 (bằng + bảng điểm + giấy tờ cốt lõi)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-10",
+    "phase": "T-10 đến T-8 tháng",
+    "task": "Viết CV bản 1 + chuẩn hoá Europass/format EU",
+    "priority": "P2",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-11",
+    "phase": "T-10 đến T-8 tháng",
+    "task": "Xây bộ project evidence (GitHub/Kaggle/portfolio)",
+    "priority": "P2",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-12",
+    "phase": "T-9 đến T-7 tháng",
+    "task": "Viết SOP/Motivation Letter khung (core story)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-13",
+    "phase": "T-9 đến T-7 tháng",
+    "task": "Customize SOP theo từng trường (ít nhất top 5)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-14",
+    "phase": "T-9 đến T-7 tháng",
+    "task": "Chốt người viết LOR + gửi “LOR kit” (CV + SOP + bullet điểm mạnh)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-15",
+    "phase": "T-8 đến T-6 tháng",
+    "task": "Thi IELTS/TOEFL lần 1 + lên kế hoạch thi lại (nếu cần)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-16",
+    "phase": "T-8 đến T-6 tháng",
+    "task": "Tạo tài khoản Uni-assist (nếu có trường dùng) + chuẩn bị VPD (nếu yêu cầu)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-17",
+    "phase": "T-7 đến T-5 tháng",
+    "task": "Hoàn thiện bộ hồ sơ nộp (PDF theo chuẩn từng cổng)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-18",
+    "phase": "T-7 đến T-5 tháng",
+    "task": "Nộp hồ sơ các trường deadline sớm (rolling/early)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-19",
+    "phase": "T-6 đến T-3 tháng",
+    "task": "Theo dõi trạng thái hồ sơ (uni portal / Uni-assist) + bổ sung thiếu",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-20",
+    "phase": "T-6 đến T-3 tháng",
+    "task": "Nhận kết quả (Zulassung/Zu) + chọn trường",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-21",
+    "phase": "T-4 đến T-2 tháng",
+    "task": "Mở Blocked Account (đúng mức quy định năm đó)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-22",
+    "phase": "T-4 đến T-2 tháng",
+    "task": "Mua bảo hiểm giai đoạn xin visa (travel insurance)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-23",
+    "phase": "T-4 đến T-2 tháng",
+    "task": "Đặt lịch hẹn visa + chuẩn bị checklist visa",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-24",
+    "phase": "T-3 đến T-1 tháng",
+    "task": "Nộp visa + phỏng vấn (nếu có)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-25",
+    "phase": "T-2 đến T-1 tháng",
+    "task": "Tìm nhà (WG/Student dorm), chuẩn bị Anmeldung docs",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-26",
+    "phase": "T-2 đến T-1 tháng",
+    "task": "Đóng Semesterbeitrag (nếu cần trước khi nhập học)",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-27",
+    "phase": "T-1 đến T-0.5 tháng",
+    "task": "Đặt vé bay + chuẩn bị hành lý + sim/bank plan",
+    "priority": "P2",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "tl-28",
+    "phase": "T-0.5 đến nhập học",
+    "task": "Sang Đức: đăng ký cư trú (Anmeldung), mở bank, kích hoạt bảo hiểm",
+    "priority": "P1",
+    "startDate": "",
+    "dueDate": "",
+    "status": "todo",
+    "note": ""
+   }
+  ],
+  "documents": [
+   {
+    "id": "doc-1",
+    "name": "APS (Thẩm tra thạc sĩ) – Hồ sơ & kết quả",
+    "translation": "Dịch/CC theo yêu cầu APS",
+    "usedFor": "APS, Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Thời gian xử lý có thể dài; nên khởi động sớm."
+   },
+   {
+    "id": "doc-2",
+    "name": "Hộ chiếu",
+    "translation": "Photo công chứng (x2–x4)",
+    "usedFor": "Visa, Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Kiểm tra hạn hộ chiếu (khuyến nghị còn hạn > 12–18 tháng)."
+   },
+   {
+    "id": "doc-3",
+    "name": "Ảnh thẻ sinh trắc học",
+    "translation": "Không",
+    "usedFor": "Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Chuẩn kích thước theo yêu cầu LSQ/ĐSQ."
+   },
+   {
+    "id": "doc-4",
+    "name": "Bằng tốt nghiệp ĐH",
+    "translation": "Dịch + công chứng (x2–x4)",
+    "usedFor": "APS, Uni-assist/Trường, Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Nếu chưa có bằng: giấy chứng nhận tốt nghiệp tạm thời (nếu được chấp nhận)."
+   },
+   {
+    "id": "doc-5",
+    "name": "Bảng điểm ĐH (Transcript)",
+    "translation": "Dịch + công chứng (x2–x4)",
+    "usedFor": "APS, Uni-assist/Trường, Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Xin bản tiếng Anh từ trường (nếu có) để giảm dịch thuật."
+   },
+   {
+    "id": "doc-6",
+    "name": "Thang điểm/Grading scale",
+    "translation": "Dịch + công chứng (x1–x2)",
+    "usedFor": "Uni-assist/Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Nhiều trường yêu cầu để quy đổi/đánh giá GPA."
+   },
+   {
+    "id": "doc-7",
+    "name": "Giấy xác nhận tốt nghiệp/hoàn thành chương trình",
+    "translation": "Dịch + công chứng (x1–x2)",
+    "usedFor": "APS, Uni-assist/Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Hữu ích nếu đang chờ cấp bằng."
+   },
+   {
+    "id": "doc-8",
+    "name": "Syllabus/Module Handbook từng môn (ĐH)",
+    "translation": "Thường dịch chọn lọc (x1)",
+    "usedFor": "APS, Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Ưu tiên các môn nền DS/CS/Math/Stats/ML/DB."
+   },
+   {
+    "id": "doc-9",
+    "name": "Mô tả chương trình/chuẩn đầu ra ngành (nếu có)",
+    "translation": "Dịch (x1)",
+    "usedFor": "Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Dùng khi cần chứng minh background phù hợp."
+   },
+   {
+    "id": "doc-10",
+    "name": "CV (Europass / chuẩn EU)",
+    "translation": "Không (viết tiếng Anh)",
+    "usedFor": "Trường, Visa (tùy)",
+    "status": "todo",
+    "dueDate": "",
+    "note": "1–2 trang, nhấn mạnh project/skills DS."
+   },
+   {
+    "id": "doc-11",
+    "name": "Motivation Letter / SOP",
+    "translation": "Không (tiếng Anh)",
+    "usedFor": "Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Viết theo từng chương trình; tránh dùng 1 bản cho tất cả."
+   },
+   {
+    "id": "doc-12",
+    "name": "Thư giới thiệu (LOR) 1",
+    "translation": "Không (tiếng Anh)",
+    "usedFor": "Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Xác định người viết + deadline nội bộ."
+   },
+   {
+    "id": "doc-13",
+    "name": "Thư giới thiệu (LOR) 2",
+    "translation": "Không (tiếng Anh)",
+    "usedFor": "Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Có thể cần bản ký tay + đóng dấu (tùy trường)."
+   },
+   {
+    "id": "doc-14",
+    "name": "Chứng chỉ tiếng Anh (IELTS/TOEFL)",
+    "translation": "Không",
+    "usedFor": "Trường, Visa (tùy)",
+    "status": "todo",
+    "dueDate": "",
+    "note": "DS taught in English thường yêu cầu IELTS/TOEFL; kiểm tra điểm tối thiểu từng trường."
+   },
+   {
+    "id": "doc-15",
+    "name": "(Nếu có) TestDaF/Goethe (tiếng Đức)",
+    "translation": "Không",
+    "usedFor": "Trường/Visa (tùy)",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Không bắt buộc nếu chương trình 100% English, nhưng biết Đức ngữ là lợi thế sống/việc."
+   },
+   {
+    "id": "doc-16",
+    "name": "Portfolio dự án (GitHub/Kaggle/Website)",
+    "translation": "Không",
+    "usedFor": "Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Link + mô tả ngắn; ưu tiên dự án ML/DS thực tế."
+   },
+   {
+    "id": "doc-17",
+    "name": "Bài báo/giải thưởng/chứng nhận khóa học",
+    "translation": "Dịch (tùy)",
+    "usedFor": "Trường",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Chọn cái “đắt giá” nhất, tránh nhồi quá nhiều."
+   },
+   {
+    "id": "doc-18",
+    "name": "Chứng minh tài chính (Visa)",
+    "translation": "Không",
+    "usedFor": "Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Thường dùng blocked account hoặc bảo lãnh (tùy trường hợp)."
+   },
+   {
+    "id": "doc-19",
+    "name": "Blocked Account confirmation",
+    "translation": "Không",
+    "usedFor": "Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Chuẩn bị theo mức quy định năm bạn nộp (điền số chính xác khi có)."
+   },
+   {
+    "id": "doc-20",
+    "name": "Bảo hiểm y tế (confirmation)",
+    "translation": "Không",
+    "usedFor": "Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Có loại travel insurance cho giai đoạn visa + public/private khi sang Đức."
+   },
+   {
+    "id": "doc-21",
+    "name": "Đơn xin visa + tờ khai",
+    "translation": "Không",
+    "usedFor": "Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Điền đúng theo hướng dẫn LSQ/ĐSQ."
+   },
+   {
+    "id": "doc-22",
+    "name": "Lịch hẹn visa + checklist LSQ/ĐSQ",
+    "translation": "Không",
+    "usedFor": "Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Chuẩn bị đúng checklist theo nơi bạn nộp."
+   },
+   {
+    "id": "doc-23",
+    "name": "Uni-assist VPD (nếu trường yêu cầu)",
+    "translation": "Không",
+    "usedFor": "Uni-assist",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Một số trường yêu cầu VPD trước khi nộp trực tiếp."
+   },
+   {
+    "id": "doc-24",
+    "name": "Phong bì/tem/địa chỉ nhận kết quả (nếu có)",
+    "translation": "Không",
+    "usedFor": "APS/Visa",
+    "status": "todo",
+    "dueDate": "",
+    "note": "Tùy quy trình từng nơi."
+   }
+  ],
+  "universities": [
+   {
+    "id": "uni-1",
+    "name": "TU München (TUM)",
+    "program": "Data Engineering & Analytics / CS",
+    "portal": "Trực tiếp (cổng trường)",
+    "deadline": "",
+    "requirements": "Nền tảng Toán/CS; English proof; có thể yêu cầu GRE/điều kiện riêng theo năm",
+    "status": "Đang chuẩn bị"
+   },
+   {
+    "id": "uni-2",
+    "name": "LMU München",
+    "program": "Data Science / Statistics",
+    "portal": "Trực tiếp (cổng trường)",
+    "deadline": "",
+    "requirements": "Nền Toán/Stats/CS; English proof; cạnh tranh cao",
+    "status": "Đang chuẩn bị"
+   },
+   {
+    "id": "uni-3",
+    "name": "RWTH Aachen",
+    "program": "Data Science / Computer Science track (tùy chương trình)",
+    "portal": "Trực tiếp hoặc Uni-assist (tùy program)",
+    "deadline": "",
+    "requirements": "Nền CS/Math; English proof; kiểm tra yêu cầu ECTS",
+    "status": "Đang chuẩn bị"
+   },
+   {
+    "id": "uni-4",
+    "name": "TU Berlin",
+    "program": "Computer Science / Data-related track (tùy program)",
+    "portal": "Uni-assist hoặc trực tiếp (tùy program)",
+    "deadline": "",
+    "requirements": "Background phù hợp; English proof; chú ý chứng minh ECTS",
+    "status": "Đang chuẩn bị"
+   },
+   {
+    "id": "uni-5",
+    "name": "Universität Mannheim",
+    "program": "Mannheim Master in Data Science",
+    "portal": "Trực tiếp (cổng trường)",
+    "deadline": "",
+    "requirements": "Thường yêu cầu Stats/Math/Programming mạnh; English proof",
+    "status": "Đang chuẩn bị"
+   }
+  ],
+  "budget": [
+   {
+    "id": "bg-1",
+    "item": "Phí APS",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Kiểm tra mức phí mới nhất theo thời điểm nộp."
+   },
+   {
+    "id": "bg-2",
+    "item": "Dịch thuật + công chứng (bằng, bảng điểm, giấy tờ)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Gom dịch theo batch, ưu tiên giấy tờ cốt lõi trước."
+   },
+   {
+    "id": "bg-3",
+    "item": "Phí thi IELTS/TOEFL",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Canh voucher/đợt giảm (nếu có), thi sớm để kịp plan thi lại."
+   },
+   {
+    "id": "bg-4",
+    "item": "Phí gửi bảng điểm/chứng chỉ (nếu cần bản cứng)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Nhiều nơi chấp nhận bản điện tử; kiểm tra trước khi gửi DHL."
+   },
+   {
+    "id": "bg-5",
+    "item": "Uni-assist (trường đầu)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Mức phí theo số lượng trường; nộp đúng định dạng để tránh tốn phí lại."
+   },
+   {
+    "id": "bg-6",
+    "item": "Uni-assist (mỗi trường tiếp theo)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Chỉ nộp thêm khi hồ sơ đã “ready” để giảm rủi ro sai sót."
+   },
+   {
+    "id": "bg-7",
+    "item": "Phí nộp hồ sơ trực tiếp (application fee)",
+    "eur": "0",
+    "vnd": "0",
+    "paid": false,
+    "note": "Nhiều trường công ở Đức miễn phí, nhưng có ngoại lệ."
+   },
+   {
+    "id": "bg-8",
+    "item": "Chuyển phát nhanh (DHL/EMS)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Gộp gửi, theo dõi tracking."
+   },
+   {
+    "id": "bg-9",
+    "item": "Blocked Account (tổng mức yêu cầu)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Khoản để chứng minh tài chính, không phải phí mất; dùng cho sinh hoạt hàng tháng."
+   },
+   {
+    "id": "bg-10",
+    "item": "Phí mở/duy trì blocked account (service fee)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "So sánh nhà cung cấp (phí mở + phí duy trì + tốc độ)."
+   },
+   {
+    "id": "bg-11",
+    "item": "Bảo hiểm giai đoạn xin visa (travel)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Mua đúng chuẩn yêu cầu visa (mức cover, thời hạn)."
+   },
+   {
+    "id": "bg-12",
+    "item": "Bảo hiểm y tế khi sang Đức (public/private)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Sinh viên thường chọn public; tùy trường hợp tuổi/ngành."
+   },
+   {
+    "id": "bg-13",
+    "item": "Phí visa",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Kiểm tra phí theo loại visa (student/applicant)."
+   },
+   {
+    "id": "bg-14",
+    "item": "Vé máy bay 1 chiều",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Canh khuyến mãi, bay sớm vừa đủ để ổn định chỗ ở."
+   },
+   {
+    "id": "bg-15",
+    "item": "Chỗ ở tháng đầu (deposit + rent)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "WG thường cần deposit 1–3 tháng; chuẩn bị buffer."
+   },
+   {
+    "id": "bg-16",
+    "item": "Semesterbeitrag (kỳ 1)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Khác nhau theo trường (~vài trăm EUR)."
+   },
+   {
+    "id": "bg-17",
+    "item": "Chi phí setup ban đầu (sim, đồ dùng, vé tàu tháng đầu)",
+    "eur": "",
+    "vnd": "",
+    "paid": false,
+    "note": "Mua đồ second-hand, dùng student ticket nếu có trong semester fee."
+   }
+  ]
+ },
+ "ielts": {
+  "target": {
+   "overall": 7.0,
+   "listening": 7.5,
+   "reading": 7.5,
+   "writing": 6.5,
+   "speaking": 6.5,
+   "examDate": "",
+   "testType": "Academic"
+  },
+  "tests": [],
+  "practiceTasks": [
+   {
+    "id": "pt-1",
+    "title": "Làm đề thử đầu vào (Diagnostic Full Test) để biết trình độ hiện tại",
+    "skill": "Full Test",
+    "dueDate": "",
+    "duration": 165,
+    "status": "todo",
+    "note": "Ghi lại điểm từng phần vào mục Nhật ký làm đề."
+   },
+   {
+    "id": "pt-2",
+    "title": "Luyện Listening Section 3 & 4 (Multiple Choice & Note Completion)",
+    "skill": "Listening",
+    "dueDate": "",
+    "duration": 40,
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "pt-3",
+    "title": "Luyện Reading Passage 2 & 3 (True/False/Not Given & Matching Headings)",
+    "skill": "Reading",
+    "dueDate": "",
+    "duration": 45,
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "pt-4",
+    "title": "Viết Writing Task 1 (Biểu đồ đường / bảng) & bấm giờ 20 phút",
+    "skill": "Writing",
+    "dueDate": "",
+    "duration": 20,
+    "status": "todo",
+    "note": ""
+   },
+   {
+    "id": "pt-5",
+    "title": "Luyện Speaking Part 2 Cue Card + ghi âm tự nghe lại",
+    "skill": "Speaking",
+    "dueDate": "",
+    "duration": 30,
+    "status": "todo",
+    "note": ""
+   }
+  ]
+ },
+ "customPlans": []
+}

@@ -1,0 +1,56 @@
+# Tự build ứng dụng Blazor WebAssembly và đưa lên GitHub Pages mỗi khi push lên nhánh main.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish
+        run: dotnet publish PlanningTable.Web/PlanningTable.Web.csproj -c Release -o release
+
+      - name: Chuẩn bị cho GitHub Pages
+        run: |
+          REPO="${{ github.event.repository.name }}"
+          # Trang dạng <user>.github.io chạy ở gốc "/", còn lại chạy ở "/<tên-repo>/"
+          if [[ "$REPO" == *.github.io ]]; then BASE="/"; else BASE="/$REPO/"; fi
+          sed -i "s|<base href=\"/\" />|<base href=\"$BASE\" />|" release/wwwroot/index.html
+          # Mở thẳng link con (VD: /ielts) vẫn chạy được
+          cp release/wwwroot/index.html release/wwwroot/404.html
+          # Không để GitHub xử lý Jekyll (giữ nguyên thư mục _framework)
+          touch release/wwwroot/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: release/wwwroot
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

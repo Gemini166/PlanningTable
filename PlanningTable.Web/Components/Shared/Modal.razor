@@ -1,0 +1,27 @@
+@if (Visible)
+{
+    <div class="modal-backdrop" role="dialog" aria-modal="true" @onclick="Close">
+        <div class="modal-sheet @(Wide ? "modal-wide" : "")" @onclick:stopPropagation="true">
+            <div class="modal-handle" aria-hidden="true"></div>
+            <div class="modal-header">
+                <h2 class="modal-title">@Title</h2>
+                <button class="icon-btn-sm" type="button" aria-label="Đóng" @onclick="Close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">@ChildContent</div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public bool Wide { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private Task Close() => OnClose.InvokeAsync();
+}

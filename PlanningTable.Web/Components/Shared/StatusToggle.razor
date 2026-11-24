@@ -1,0 +1,8 @@
+<button class="status-toggle @Status" type="button" title="Bấm để đổi trạng thái (@Fmt.StatusLabel(Status))" @onclick="OnClick" @onclick:stopPropagation="true">
+    @Icons.ForStatus(Status)
+</button>
+
+@code {
+    [Parameter] public string Status { get; set; } = Data.Status.Todo;
+    [Parameter] public EventCallback OnClick { get; set; }
+}

@@ -1,0 +1,258 @@
+@inject PlannerStore Store
+@inject UiService Ui
+
+<GanttChart Rows="BuildRows()"
+            EmptyText="Không có đầu việc nào khớp bộ lọc."
+            OnRowClick="r => OpenEdit((TimelineTask)r.Item!)"
+            OnStatusClick="r => CycleStatus((TimelineTask)r.Item!)"
+            OnGroupToggle="ToggleGroup"
+            OnSchedule="Schedule">
+    <Toolbar>
+        <button class="btn btn-primary btn-sm" type="button" @onclick="() => OpenEdit(null)">+ Thêm bản ghi</button>
+        @if (Items.Any(t => !t.StartDate.HasValue && !t.DueDate.HasValue))
+        {
+            <button class="btn btn-soft btn-sm" type="button" title="Điền ngày cho các việc chưa có ngày, dựa vào ngày nhập học và tên giai đoạn (VD: T-12 đến T-10 tháng)" @onclick="AutoSchedule">⚡ Tự xếp lịch</button>
+        }
+        <div class="chip-scroll">
+            @foreach (var (key, label) in Filters)
+            {
+                <button class="chip @(_filter == key ? "active" : "")" type="button" @onclick="() => _filter = key">@label</button>
+            }
+        </div>
+    </Toolbar>
+</GanttChart>
+
+<p class="hint-text">
+    💡 Bấm vào tên hoặc thanh màu để sửa; bấm vào vùng trống của dòng chưa có ngày để đặt ngày bắt đầu (mặc định 7 ngày).
+    Thanh đỏ = quá hạn, xanh lá = đã xong, cam = đang làm.
+</p>
+
+<Modal Visible="_draft is not null" Title="@(_editing is null ? "Thêm đầu việc" : "Chi tiết / Sửa đầu việc")" OnClose="Close">
+    @if (_draft is not null)
+    {
+        <form @onsubmit="Save">
+            <div class="form-group">
+                <label class="form-label">Giai đoạn / Mốc thời gian</label>
+                <input class="form-input" list="phaseList" required @bind="_draft.Phase" placeholder="VD: T-12 đến T-10 tháng" />
+                <datalist id="phaseList">
+                    @foreach (var p in Phases)
+                    {
+                        <option value="@p"></option>
+                    }
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Đầu việc chi tiết</label>
+                <input class="form-input" required @bind="_draft.Task" placeholder="Nhập công việc cần làm..." />
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Mức độ ưu tiên</label>
+                    <select class="form-select" @bind="_draft.Priority">
+                        <option value="P1">P1 - Quan trọng nhất</option>
+                        <option value="P2">P2 - Trung bình</option>
+                        <option value="P3">P3 - Bổ sung</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" @bind="_draft.Status">
+                        <option value="todo">Chưa làm</option>
+                        <option value="doing">Đang làm</option>
+                        <option value="done">Hoàn thành</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label">Ngày bắt đầu</label>
+                    <input type="date" class="form-input" @bind="_draft.StartDate" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hạn hoàn thành</label>
+                    <input type="date" class="form-input" @bind="_draft.DueDate" />
+                </div>
+            </div>
+            @if (_draft.StartDate is { } s && _draft.DueDate is { } d)
+            {
+                <div class="form-hint">⏱ Thời lượng: <strong>@(d.DayNumber - s.DayNumber + 1) ngày</strong></div>
+            }
+            <div class="form-group">
+                <label class="form-label">Ghi chú</label>
+                <textarea class="form-textarea" @bind="_draft.Note" placeholder="Ghi chú thêm..."></textarea>
+            </div>
+            @if (_error is not null)
+            {
+                <div class="form-error">@_error</div>
+            }
+            <div class="form-actions">
+                @if (_editing is not null)
+                {
+                    <button type="button" class="btn btn-danger" style="margin-right:auto" @onclick="Delete">Xóa</button>
+                }
+                <button type="button" class="btn btn-soft" @onclick="Close">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
+            </div>
+        </form>
+    }
+</Modal>
+
+@code {
+    [Parameter, EditorRequired] public List<TimelineTask> Items { get; set; } = [];
+    [Parameter] public DateOnly? IntakeDate { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly (string, string)[] Filters =
+        [("all", "Tất cả"), ("todo", "Chưa làm"), ("doing", "Đang làm"), ("done", "Hoàn thành"), ("P1", "Ưu tiên P1")];
+
+    private string _filter = "all";
+    private readonly HashSet<string> _collapsed = [];
+    private TimelineTask? _editing;
+    private TimelineTask? _draft;
+    private string? _error;
+
+    private IEnumerable<string> Phases => Items.Select(t => t.Phase).Where(p => p != "").Distinct();
+
+    private List<GanttRow> BuildRows()
+    {
+        var filtered = Items.Where(t => _filter switch
+        {
+            "P1" => t.Priority == "P1",
+            "all" => true,
+            var s => t.Status == s
+        });
+
+        var rows = new List<GanttRow>();
+        var n = 0;
+        foreach (var group in filtered.GroupBy(t => string.IsNullOrWhiteSpace(t.Phase) ? "Giai đoạn khác" : t.Phase))
+        {
+            var list = group.ToList();
+            var froms = list.Select(t => t.StartDate ?? t.DueDate).Where(d => d is not null).ToList();
+            var tos = list.Select(t => t.DueDate ?? t.StartDate).Where(d => d is not null).ToList();
+            var done = list.Count(t => t.Status == Status.Done);
+            var collapsed = _collapsed.Contains(group.Key);
+            rows.Add(new GanttRow
+            {
+                Key = "g:" + group.Key,
+                Label = group.Key,
+                IsGroup = true,
+                Collapsed = collapsed,
+                Sub = $"{done}/{list.Count}",
+                Status = done == list.Count ? Status.Done : done > 0 || list.Any(t => t.Status == Status.Doing) ? Status.Doing : Status.Todo,
+                Start = froms.Min(),
+                End = tos.Max()
+            });
+            foreach (var t in list)
+            {
+                n++;
+                if (collapsed) continue;
+                rows.Add(new GanttRow
+                {
+                    Key = "t:" + t.Id,
+                    Number = n,
+                    Label = t.Task,
+                    Start = t.StartDate,
+                    End = t.DueDate,
+                    Status = t.Status,
+                    Priority = t.Priority,
+                    Item = t
+                });
+            }
+        }
+        return rows;
+    }
+
+    private void ToggleGroup(GanttRow r)
+    {
+        if (!_collapsed.Remove(r.Label)) _collapsed.Add(r.Label);
+    }
+
+    private async Task CycleStatus(TimelineTask t)
+    {
+        t.Status = Fmt.NextStatus(t.Status);
+        await Store.UpdateAsync(t);
+        Ui.Toast($"Trạng thái: {Fmt.StatusLabel(t.Status)}");
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Schedule((GanttRow Row, DateOnly Date) a)
+    {
+        var t = (TimelineTask)a.Row.Item!;
+        t.StartDate = a.Date;
+        t.DueDate ??= a.Date.AddDays(6);
+        if (t.DueDate < t.StartDate) t.DueDate = t.StartDate.Value.AddDays(6);
+        await Store.UpdateAsync(t);
+        Ui.Toast($"Đã đặt {Fmt.Date(t.StartDate)} → {Fmt.Date(t.DueDate)}");
+        await OnChanged.InvokeAsync();
+    }
+
+    /// <summary>
+    /// Đọc giai đoạn dạng "T-12 đến T-10 tháng" / "T-0.5 đến nhập học" và tính ngày
+    /// tương ứng tính từ ngày nhập học. Chỉ điền cho các việc chưa có ngày.
+    /// </summary>
+    private async Task AutoSchedule()
+    {
+        if (IntakeDate is not { } intake)
+        {
+            Ui.Toast("Hãy chọn “Ngày nhập học dự kiến” ở cột trái trước");
+            return;
+        }
+        var count = 0;
+        foreach (var t in Items.Where(t => t.StartDate is null && t.DueDate is null))
+        {
+            if (PhaseWindow.TryParse(t.Phase, intake) is not { } w) continue;
+            t.StartDate = w.Start;
+            t.DueDate = w.End;
+            await Store.UpdateAsync(t);
+            count++;
+        }
+        Ui.Toast(count == 0 ? "Không nhận ra giai đoạn nào dạng “T-x đến T-y tháng”" : $"Đã xếp lịch cho {count} đầu việc");
+        await OnChanged.InvokeAsync();
+    }
+
+    private void OpenEdit(TimelineTask? t)
+    {
+        _error = null;
+        _editing = t;
+        _draft = t is null
+            ? new TimelineTask { Phase = Phases.FirstOrDefault() ?? "T-12 đến T-10 tháng" }
+            : Cloner.Clone(t);
+    }
+
+    private void Close() { _draft = null; _editing = null; }
+
+    private async Task Save()
+    {
+        if (_draft is null) return;
+        if (_draft.StartDate is { } s && _draft.DueDate is { } d && d < s)
+        {
+            _error = "Hạn hoàn thành phải sau ngày bắt đầu.";
+            return;
+        }
+        _draft.Phase = _draft.Phase.Trim();
+        _draft.Task = _draft.Task.Trim();
+        if (_editing is null)
+        {
+            Items.Add(await Store.AddAsync(_draft));
+            Ui.Toast("Đã thêm đầu việc mới");
+        }
+        else
+        {
+            Cloner.CopyInto(_draft, _editing);
+            await Store.UpdateAsync(_editing);
+            Ui.Toast("Đã cập nhật đầu việc");
+        }
+        Close();
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Delete()
+    {
+        if (_editing is null || !await Ui.ConfirmAsync("Xóa đầu việc này khỏi lộ trình?")) return;
+        await Store.DeleteAsync(_editing);
+        Items.Remove(_editing);
+        Close();
+        Ui.Toast("Đã xóa đầu việc");
+        await OnChanged.InvokeAsync();
+    }
+}

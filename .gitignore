@@ -1,0 +1,8 @@
+.vs/
+.vscode/
+.DS_Store
+Thumbs.db
+bin/
+obj/
+release/
+*.user

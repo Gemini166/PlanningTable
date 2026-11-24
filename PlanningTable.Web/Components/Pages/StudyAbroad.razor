@@ -1,0 +1,114 @@
+@page "/"
+@inject PlannerStore Store
+
+<PageTitle>Kế hoạch Du học</PageTitle>
+
+@if (_loading)
+{
+    <div class="card empty-state"><p>Đang tải dữ liệu…</p></div>
+    return;
+}
+
+<div class="workspace-2col">
+    <aside class="ws-left">
+        <div class="summary-box">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <span class="sub-lbl">Tiến độ du học</span>
+                <span class="big-num">@Pct%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:@(Pct)%"></div></div>
+            <div class="summary-mini-stats">
+                <div class="summary-mini-pill"><strong>@Count(Status.Done)</strong><span>Xong</span></div>
+                <div class="summary-mini-pill"><strong>@Count(Status.Doing)</strong><span>Đang làm</span></div>
+                <div class="summary-mini-pill"><strong>@Count(Status.Todo)</strong><span>Chưa</span></div>
+            </div>
+            <div class="summary-date-box">
+                <div class="sub-lbl">Ngày nhập học dự kiến</div>
+                <div style="font-size:0.78rem;font-weight:700;margin-top:2px">@CountdownText</div>
+                <input type="date" class="summary-date-input" aria-label="Ngày nhập học dự kiến"
+                       value="@_settings.TargetIntakeDate?.ToString("yyyy-MM-dd")" @onchange="ChangeIntake" />
+            </div>
+        </div>
+
+        <div class="card-compact">
+            <div class="side-menu-title">Danh mục du học</div>
+            <nav class="side-menu" role="tablist">
+                <button class="side-menu-item @Active("timeline")" type="button" @onclick='() => _tab = "timeline"'>
+                    <span class="side-menu-left"><span>🗺️</span><span>Timeline</span></span>
+                    <span class="side-menu-count">@Count(Status.Done)/@_timeline.Count</span>
+                </button>
+                <button class="side-menu-item @Active("docs")" type="button" @onclick='() => _tab = "docs"'>
+                    <span class="side-menu-left"><span>📄</span><span>Checklist giấy tờ</span></span>
+                    <span class="side-menu-count">@_docs.Count(d => d.Checked)/@_docs.Count</span>
+                </button>
+                <button class="side-menu-item @Active("unis")" type="button" @onclick='() => _tab = "unis"'>
+                    <span class="side-menu-left"><span>🎓</span><span>Tìm trường</span></span>
+                    <span class="side-menu-count">@_unis.Count</span>
+                </button>
+                <button class="side-menu-item @Active("budget")" type="button" @onclick='() => _tab = "budget"'>
+                    <span class="side-menu-left"><span>💰</span><span>Chi phí</span></span>
+                    <span class="side-menu-count">@_budget.Count</span>
+                </button>
+            </nav>
+        </div>
+    </aside>
+
+    <section class="ws-main">
+        @switch (_tab)
+        {
+            case "timeline":
+                <TimelineView Items="_timeline" IntakeDate="_settings.TargetIntakeDate" OnChanged="StateHasChanged" />
+                break;
+            case "docs":
+                <DocumentsGrid Items="_docs" OnChanged="StateHasChanged" />
+                break;
+            case "unis":
+                <UniversitiesGrid Items="_unis" OnChanged="StateHasChanged" />
+                break;
+            case "budget":
+                <BudgetView Items="_budget" Settings="_settings" OnChanged="StateHasChanged" />
+                break;
+        }
+    </section>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "tab")] public string? TabQuery { get; set; }
+
+    private bool _loading = true;
+    private string _tab = "timeline";
+    private AppSettings _settings = new();
+    private List<TimelineTask> _timeline = [];
+    private List<DocumentItem> _docs = [];
+    private List<University> _unis = [];
+    private List<BudgetItem> _budget = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _settings = await Store.GetSettingsAsync();
+        _timeline = await Store.ListAsync<TimelineTask>();
+        _docs = await Store.ListDocumentsAsync();
+        _unis = await Store.ListAsync<University>();
+        _budget = await Store.ListAsync<BudgetItem>();
+        if (TabQuery is "timeline" or "docs" or "unis" or "budget") _tab = TabQuery;
+        _loading = false;
+    }
+
+    private string Active(string tab) => _tab == tab ? "active" : "";
+    private int Count(string status) => _timeline.Count(t => t.Status == status);
+    private int Pct => _timeline.Count == 0 ? 0 : (int)Math.Round(Count(Status.Done) * 100.0 / _timeline.Count);
+
+    private string CountdownText => Fmt.DaysUntil(_settings.TargetIntakeDate) switch
+    {
+        null => "Chưa chọn ngày",
+        > 0 and var d => $"Còn {d} ngày (~{d / 30.0:0.0} tháng)",
+        0 => "Hôm nay nhập học!",
+        var d => $"Đã qua {-d} ngày"
+    };
+
+    private async Task ChangeIntake(ChangeEventArgs e)
+    {
+        var value = DateOnly.TryParse(e.Value?.ToString(), CultureInfo.InvariantCulture, out var d) ? d : (DateOnly?)null;
+        _settings = await Store.UpdateSettingsAsync(s => s.TargetIntakeDate = value);
+    }
+}
